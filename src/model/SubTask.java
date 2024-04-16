@@ -1,23 +1,20 @@
 package model;
-
 public class SubTask extends Task {
-
-    private Epic epic;
-    public SubTask(String name, Status status, String description) {
+    private int idEpic;
+    public SubTask(String name, Status status, String description,int idEpic) { // для создания подзадачи
         super(name, status, description);
+        this.idEpic = idEpic;
     }
-    public SubTask (int id, String name, Status status, String description) {
+
+    public SubTask(int id, String name, Status status, String description) {
         super(id, name, status, description);
     }
-    @Override
-    public Epic getEpic(){
-        return epic;
-    }
-    public void setEpic(Epic epic) {
-        this.epic = epic;
+
+    public int getEpic() {
+        return idEpic;
     }
 
-
-
-
+    public void setEpic(int idEpic) {
+        this.idEpic = idEpic;
+    } // стоит задавать при создании подзадачи в конструкторе
 }

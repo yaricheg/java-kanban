@@ -1,13 +1,10 @@
 package model;
-
 import java.util.Objects;
 
 public class Task {
-
     private int id;
     private String name;
-
-    protected Status status;
+    private Status status;
     private String description;
 
     public Task(int id, String name, Status status, String description) {
@@ -16,15 +13,13 @@ public class Task {
         this.status = status;
         this.description = description;
     }
+
     public Task(String name, Status status, String description) {
         this.name = name;
         this.status = status;
         this.description = description;
     }
 
-    public Epic getEpic(){
-        return null;
-    }
     public int getId() {
         return id;
     }

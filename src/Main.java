@@ -3,7 +3,6 @@ import model.Status;
 import model.SubTask;
 import model.Task;
 import service.TaskManager;
-
 import static model.Status.NEW;
 import static model.Status.DONE;
 import static model.Status.IN_PROGRESS;
@@ -15,23 +14,23 @@ public class Main {
         taskManager.createTask(new Task("Сходить в кино", NEW, "С друзьями в 19:00"));
         taskManager.createTask(new Task("Сходить в магазин", NEW, "Купить помидоры и огурцы"));
 
-        Epic Project  = taskManager.createEpic(new Epic("Сдача проекта", "По английскому языку"));
-        taskManager.createSubTask(new SubTask("Перевести текст", NEW, ""), Project);
-        taskManager.createSubTask(new SubTask("Выучить слова", DONE, "задача выполнена вчера"), Project);
+        Epic Project = taskManager.createEpic(new Epic("Сдача проекта", "По английскому языку"));
+        taskManager.createSubTask(new SubTask("Перевести текст", NEW, "Про кошку", Project.getId()));
+        taskManager.createSubTask(new SubTask("Выучить слова", DONE, "задача выполнена вчера", Project.getId()));
 
 
         Epic Travel = taskManager.createEpic(new Epic("Поездка в Грузию", "В Тбилиси"));
-        taskManager.createSubTask(new SubTask("Взять вещи", NEW, "одежда, обувь, продукты"), Travel);
+        taskManager.createSubTask(new SubTask("Взять вещи", NEW, "одежда, обувь, продукты", Travel.getId()));
 
 
-        taskManager.getAllTasks();
-        taskManager.getAllEpics();
-        taskManager.getAllSubTasks();
+        System.out.println(taskManager.getAllTasks());
+        System.out.println(taskManager.getAllEpics());
+        System.out.println(taskManager.getAllSubTasks());
         System.out.println();
 
         taskManager.updateEpic(new Epic(6, "Поездка в Узбекистан", NEW, "в Ташкент"));
-        taskManager.getAllEpics();
-        taskManager.getAllSubTasks();
+        System.out.println(taskManager.getAllEpics());
+        System.out.println(taskManager.getAllSubTasks());
         System.out.println();
 
         taskManager.deleteTask(1);
@@ -39,12 +38,10 @@ public class Main {
         taskManager.deleteEpic(3);
 
 
-
-        taskManager.getAllTasks();
-        taskManager.getAllEpics();
-        taskManager.getAllSubTasks();
-
+        System.out.println(taskManager.getAllTasks());
+        System.out.println(taskManager.getAllEpics());
+        System.out.println(taskManager.getAllSubTasks());
+        System.out.println();
     }
-
 }
 
