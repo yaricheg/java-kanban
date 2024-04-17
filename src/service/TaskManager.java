@@ -112,13 +112,11 @@ public class TaskManager {
         Epic epic = epics.get(subtask.getEpic());
         epic.addSubTask(subtask.getId());
         calculateStatus(epic);
-        epics.put(epic.getId(), epic);// обновить эпик
         return subtask;
     }
 
     //e
     public void updateTask(Task task) {
-        tasks.get(task.getId());
         tasks.put(task.getId(), task);
 
     }
@@ -137,13 +135,9 @@ public class TaskManager {
         SubTask saved = getSubTask(subtask.getId());
         saved.setName(subtask.getName());
         saved.setStatus(subtask.getStatus());
-        deleteSubTask(subtask.getId()); // удаляем старую подзадачу из эпика
-        subtasks.put(saved.getId(), saved);
         Epic epic = epics.get(subtask.getEpic());
         epic.addSubTask(subtask.getId());// добавляем обновленную подзадачу
         calculateStatus(epic); // обновить статус эпика
-        epics.put(epic.getId(), epic);
-
     }
 
     //f
@@ -166,7 +160,6 @@ public class TaskManager {
         epic.removeSubTask(id);
         subtasks.remove(id);
         calculateStatus(epic);//обновить статус
-        epics.put(epic.getId(), epic); // положить новый эпик
     }
 
     private void calculateStatus(Epic epic) {

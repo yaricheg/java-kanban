@@ -1,11 +1,10 @@
 import model.Epic;
-import model.Status;
 import model.SubTask;
 import model.Task;
 import service.TaskManager;
 import static model.Status.NEW;
 import static model.Status.DONE;
-import static model.Status.IN_PROGRESS;
+
 
 public class Main {
 
