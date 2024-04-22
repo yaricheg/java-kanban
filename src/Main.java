@@ -1,7 +1,11 @@
 import model.Epic;
+import model.Status;
 import model.SubTask;
 import model.Task;
+
+import service.Managers;
 import service.TaskManager;
+
 import static model.Status.NEW;
 import static model.Status.DONE;
 
@@ -9,7 +13,8 @@ import static model.Status.DONE;
 public class Main {
 
     public static void main(String[] args) {
-        TaskManager taskManager = new TaskManager();
+        Managers managers = new Managers();
+        TaskManager taskManager = managers.getDefaults();
         taskManager.createTask(new Task("Сходить в кино", NEW, "С друзьями в 19:00"));
         taskManager.createTask(new Task("Сходить в магазин", NEW, "Купить помидоры и огурцы"));
 
@@ -28,6 +33,7 @@ public class Main {
         System.out.println();
 
         taskManager.updateEpic(new Epic(6, "Поездка в Узбекистан", NEW, "в Ташкент"));
+        System.out.println(taskManager.getAllTasks());
         System.out.println(taskManager.getAllEpics());
         System.out.println(taskManager.getAllSubTasks());
         System.out.println();
@@ -41,6 +47,7 @@ public class Main {
         System.out.println(taskManager.getAllEpics());
         System.out.println(taskManager.getAllSubTasks());
         System.out.println();
+
     }
 }
 
