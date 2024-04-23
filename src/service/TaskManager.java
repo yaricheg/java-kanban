@@ -25,11 +25,11 @@ public interface TaskManager {
     void deleteAllSubTasks();
 
     // c
-    void getTask(int id);
+    Task getTask(int id);
 
-    void  getEpic(int id);
+    Epic  getEpic(int id);
 
-    void getSubTask(int id);
+    SubTask getSubTask(int id);
 
     // d
     Task createTask(Task task);
@@ -54,5 +54,5 @@ public interface TaskManager {
 
     List<Task> getHistory();
 
-    /*void add(Task task);*/
+
 }

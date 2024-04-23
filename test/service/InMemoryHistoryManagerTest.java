@@ -10,6 +10,7 @@ class InMemoryHistoryManagerTest {
     private Task task;
     private Managers managers = new Managers();
     private InMemoryTaskManager inMemoryTaskManager = managers.getDefaults();
+    private InMemoryHistoryManager inMemoryHistoryManager = managers.getDefaultHistory();
 
     @BeforeEach
     void BeforeEach() {
@@ -17,19 +18,19 @@ class InMemoryHistoryManagerTest {
         for (int i = 1; i <= 12; i++) {
             Task task = inMemoryTaskManager.createTask(new Task(i, "Новая задача",
                     Status.NEW, "Задача " + i));
-            inMemoryTaskManager.getTask(i);
+            inMemoryHistoryManager.addInHistory(task);
 
         }
     }
 
     @Test
     void checkAdd() {
-        assertEquals(10, inMemoryTaskManager.getHistory().size());
+        assertEquals(10, inMemoryHistoryManager.getHistory().size());
     }
 
     @Test
     void checkGetHistory(){
-        Task taskCheck = inMemoryTaskManager.tasks.get(3);
-        assertEquals(taskCheck, inMemoryTaskManager.getHistory().get(0));
+        Task taskCheck = inMemoryTaskManager.getTask(3);
+        assertEquals(taskCheck, inMemoryHistoryManager.getHistory().get(0));
     }
 }

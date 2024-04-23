@@ -46,25 +46,25 @@ public class InMemoryTaskManagerTest {
 
     @DisplayName("Проверяется, что InMemoryTaskManager добавляет задачи разного типа и может найти их по id")
     @Test
-    void ShouldCreateTaskAndSearchId(){
-        assertEquals(task, memoryTaskManager.tasks.get(task.getId()));
-        assertEquals(epic, memoryTaskManager.epics.get(epic.getId()));
-        assertEquals(subTask, memoryTaskManager.subtasks.get(subTask.getId()));
+    void shouldCreateTaskAndSearchId(){
+        assertEquals(task, memoryTaskManager.getTask(task.getId()));
+        assertEquals(epic, memoryTaskManager.getEpic(epic.getId()));
+        assertEquals(subTask, memoryTaskManager.getSubTask(subTask.getId()));
 
     }
 
     @DisplayName("Проверяется неизменность задачи (по всем полям) при добавлении задачи в менеджер")
     @Test
-    void ShouldBeTrueTasks(){
-        assertEquals(task, memoryTaskManager.tasks.get(task.getId()));
-        assertEquals(epic, memoryTaskManager.epics.get(epic.getId()));
-        assertEquals(subTask, memoryTaskManager.subtasks.get(subTask.getId()));
+    void shouldBeTrueTasks(){
+        assertEquals(task, memoryTaskManager.getTask(task.getId()));
+        assertEquals(epic, memoryTaskManager.getEpic(epic.getId()));
+        assertEquals(subTask, memoryTaskManager.getSubTask(subTask.getId()));
 
     }
 
     @DisplayName("Проверяется, что задачи с заданным id и сгенерированным id не конфликтуют внутри менеджера")
     @Test
-    void ShouldBeFalseIdTasks(){
+    void shouldBeFalseIdTasks(){
         Task task1 = memoryTaskManager.createTask(new Task(1,"Простая задача", Status.NEW, "2+2"));
         boolean check =  task1.getId() == task.getId();
         assertFalse(check);
@@ -72,12 +72,10 @@ public class InMemoryTaskManagerTest {
 
     @DisplayName("HistoryManager должен сохранять предыдущую версию задачи и ее данных")
     @Test
-    void ShouldCheckTasksInHistoryManager(){
-        Task task1 = memoryTaskManager.tasks.get(task.getId());
-        memoryTaskManager.getTask(1);
+    void shouldCheckTasksInHistoryManager(){
+        Task task1 =  memoryTaskManager.getTask(task.getId());
         memoryTaskManager.updateTask(new Task(1,"Старая задача", Status.DONE, "Задача 1 выполнена"));
-        Task updateTask1 = memoryTaskManager.tasks.get(task.getId());
-        memoryTaskManager.getTask(1);
+        Task updateTask1 = memoryTaskManager.getTask(1);
         assertEquals(2,memoryTaskManager.getHistory().size(),"Значения должны совпадать");
         assertEquals(task1, memoryTaskManager.getHistory().get(0),"Задачи должны совпадать");
         assertEquals(updateTask1, memoryTaskManager.getHistory().get(1),"Задачи должны совпадать");
@@ -87,29 +85,29 @@ public class InMemoryTaskManagerTest {
 
     @DisplayName("Проверка удаления задачи из менеджера")
     @Test
-    void ShouldBe0DeleteTaskFromManager(){
+    void shouldBe0DeleteTaskFromManager(){
         memoryTaskManager.deleteTask(1);
-        assertEquals(0,memoryTaskManager.tasks.size());
+        assertEquals(0,memoryTaskManager.getAllTasks().size());
     }
 
     @DisplayName("Проверка удаления Эпика из менеджера")
     @Test
-    void ShouldBe0DeleteEpicFromManager(){
+    void shouldBe0DeleteEpicFromManager(){
         memoryTaskManager.deleteEpic(2);
-        assertEquals(0,memoryTaskManager.epics.size());
+        assertEquals(0,memoryTaskManager.getAllEpics().size());
     }
     @DisplayName("Проверка удаления Подзадачи из менеджера")
     @Test
-    void ShouldBe0DeleteSubTaskFromManager(){
+    void shouldBe0DeleteSubTaskFromManager(){
         memoryTaskManager.deleteSubTask(3);
-        assertEquals(0,memoryTaskManager.subtasks.size());
+        assertEquals(0,memoryTaskManager.getAllSubTasks().size());
     }
 
     @DisplayName("Проверка обновления задачи в менеджере")
     @Test
-    void ShouldBeFalseUpdateTask(){
+    void shouldBeFalseUpdateTask(){
         memoryTaskManager.updateTask(new Task(1,"Старая задача",Status.DONE, "Выполнена"));
-        boolean check = task.equals(memoryTaskManager.tasks.get(1));
+        boolean check = task.equals(memoryTaskManager.getTask(1));
         assertFalse(check);
     }
 
@@ -121,9 +119,9 @@ public class InMemoryTaskManagerTest {
 
     @DisplayName("Проверка обновления эпика в менеджере")
     @Test
-    void ShouldBeFalseUpdateEpic(){
+    void shouldBeFalseUpdateEpic(){
         memoryTaskManager.updateEpic(new Epic(2,"Старая задача", Status.NEW, "Выполнена"));
-        boolean check = equalsEpic(memoryTaskManager.epics.get(2));
+        boolean check = equalsEpic(memoryTaskManager.getEpic(2));
         assertFalse(check);
     }
 }

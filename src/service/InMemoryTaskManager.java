@@ -11,10 +11,10 @@ import java.util.List;
 
 public class InMemoryTaskManager implements TaskManager {
 
-    HashMap<Integer, Task> tasks; // удалить private для сравнения списков
-    HashMap<Integer, Epic> epics;
-    HashMap<Integer, SubTask> subtasks;
-    //private List<Task> historyOfTasks; // поменять тип объекта в листе
+    private HashMap<Integer, Task> tasks;
+    private HashMap<Integer, Epic> epics;
+    private HashMap<Integer, SubTask> subtasks;
+
     private final HistoryManager historyManager;
     private int seq = 0; // счетчик глобальный
 
@@ -92,18 +92,21 @@ public class InMemoryTaskManager implements TaskManager {
 
     // c
     @Override
-    public void getTask(int id) {
-        historyManager.add(tasks.get(id));
+    public Task getTask(int id) {
+        historyManager.addInHistory(tasks.get(id));
+        return tasks.get(id);
     }
 
     @Override
-    public void getEpic(int id) {
-        historyManager.add(epics.get(id));
+    public Epic getEpic(int id) {
+        historyManager.addInHistory(epics.get(id));
+        return epics.get(id);
     }
 
     @Override
-    public void getSubTask(int id) {
-        historyManager.add(subtasks.get(id));
+    public SubTask getSubTask(int id) {
+        historyManager.addInHistory(subtasks.get(id));
+        return subtasks.get(id);
     }
 
     // d
@@ -218,16 +221,6 @@ public class InMemoryTaskManager implements TaskManager {
         return historyManager.getHistory();
     }
 
-
-  /*  public void add(Task task){
-        if(historyOfTasks.size() < 10){
-            historyOfTasks.add(task);
-        }
-        else{
-            historyOfTasks.remove(0);
-            historyOfTasks.add(task);
-        }
-    }*/
 }
 
 
