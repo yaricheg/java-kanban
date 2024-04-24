@@ -8,7 +8,7 @@ import java.util.Objects;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class InMemoryTaskManagerTest {
-    private InMemoryTaskManager memoryTaskManager;
+    private TaskManager memoryTaskManager;
     private Task task;
     private Epic epic;
     private SubTask subTask;
@@ -16,30 +16,11 @@ public class InMemoryTaskManagerTest {
 // По заданию
     @BeforeEach
     void init() {
-        HistoryManager historyManager = new InMemoryHistoryManager();
-        memoryTaskManager = new InMemoryTaskManager(historyManager);
+        HistoryManager historyManager = Managers.getDefaultHistory();
+        memoryTaskManager =  Managers.getDefaults();
         task = memoryTaskManager.createTask(new Task("Новая задача", Status.NEW, "Задача 1"));
         epic = memoryTaskManager.createEpic(new Epic("Новый Эпик", "Задача 1"));
         subTask = memoryTaskManager.createSubTask(new SubTask("Новая подзадача", Status.NEW, "подзадача 1", epic.getId()));
-    }
-
-
-
-    private static void assertEqualsInMemoryTaskManager(InMemoryTaskManager expected, InMemoryTaskManager actual, String message) {
-        assertEquals(expected.getAllTasks(), actual.getAllTasks(), message + ", tasks");
-        assertEquals(expected.getAllEpics(), actual.getAllEpics(), message + ", tasks");
-        assertEquals(expected.getAllSubTasks(), actual.getAllSubTasks(), message + ", tasks");
-    }
-
-    @DisplayName("Проверяется,что утилитарный класс всегда возвращает готовые к работе экземпляры менеджеров")
-    @Test
-    void taskManagers() {
-        Managers managers = new Managers();
-        InMemoryTaskManager inMemoryTaskManager =  managers.getDefaults();
-        inMemoryTaskManager.createTask(new Task("Новая задача", Status.NEW, "Задача 1"));
-        Epic epic = inMemoryTaskManager.createEpic(new Epic("Новый Эпик", "Задача 1"));
-        inMemoryTaskManager.createSubTask(new SubTask("Новая подзадача", Status.NEW, "подзадача 1", epic.getId()));
-        assertEqualsInMemoryTaskManager(inMemoryTaskManager, memoryTaskManager, "менеджеры должны совпадать");
     }
 
 
@@ -112,16 +93,14 @@ public class InMemoryTaskManagerTest {
     }
 
     public boolean equalsEpic(Epic epic1) {
-        return epic1.getId() == epic.getId() && Objects.equals(epic1.getName(),
-                epic.getName()) && Objects.equals(epic1.getStatus(),
-                epic1.getStatus()) && Objects.equals(epic1.getDescription(), epic);
+        return epic1.equals(epic);
     }
 
     @DisplayName("Проверка обновления эпика в менеджере")
     @Test
-    void shouldBeFalseUpdateEpic(){
+    void shouldBeTrueUpdateEpic(){
         memoryTaskManager.updateEpic(new Epic(2,"Старая задача", Status.NEW, "Выполнена"));
         boolean check = equalsEpic(memoryTaskManager.getEpic(2));
-        assertFalse(check);
+        assertTrue(check);
     }
 }

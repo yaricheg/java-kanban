@@ -4,20 +4,23 @@ import model.Status;
 import model.Task;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class InMemoryHistoryManagerTest {
     private Task task;
-    private Managers managers = new Managers();
-    private InMemoryTaskManager inMemoryTaskManager = managers.getDefaults();
-    private InMemoryHistoryManager inMemoryHistoryManager = managers.getDefaultHistory();
+    private List<Task> listOfTasks = new ArrayList<>();
+    private HistoryManager inMemoryHistoryManager = Managers.getDefaultHistory();
 
     @BeforeEach
     void BeforeEach() {
 
         for (int i = 1; i <= 12; i++) {
-            Task task = inMemoryTaskManager.createTask(new Task(i, "Новая задача",
-                    Status.NEW, "Задача " + i));
+            task = new Task(i, "Новая задача", Status.NEW, "Задача " + i);
+            listOfTasks.add(task);
             inMemoryHistoryManager.addInHistory(task);
 
         }
@@ -30,7 +33,7 @@ class InMemoryHistoryManagerTest {
 
     @Test
     void checkGetHistory(){
-        Task taskCheck = inMemoryTaskManager.getTask(3);
-        assertEquals(taskCheck, inMemoryHistoryManager.getHistory().get(0));
+        Task taskCheck = listOfTasks.get(11);
+        assertEquals(taskCheck, inMemoryHistoryManager.getHistory().get(9));
     }
 }
