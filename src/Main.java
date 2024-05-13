@@ -1,13 +1,11 @@
 import model.Epic;
-import model.Status;
 import model.SubTask;
 import model.Task;
-
 import service.Managers;
 import service.TaskManager;
 
-import static model.Status.NEW;
 import static model.Status.DONE;
+import static model.Status.NEW;
 
 
 public class Main {
@@ -27,18 +25,31 @@ public class Main {
         taskManager.createSubTask(new SubTask("Взять вещи", NEW, "одежда, обувь, продукты", Travel.getId()));
 
 
-        System.out.println(taskManager.getAllTasks());
+        /*System.out.println(taskManager.getAllTasks());
         System.out.println(taskManager.getAllEpics());
         System.out.println(taskManager.getAllSubTasks());
-        System.out.println();
+        System.out.println();*/
 
         taskManager.updateEpic(new Epic(6, "Поездка в Узбекистан", NEW, "в Ташкент"));
-        System.out.println(taskManager.getAllTasks());
+        /*System.out.println(taskManager.getAllTasks());
         System.out.println(taskManager.getAllEpics());
         System.out.println(taskManager.getAllSubTasks());
-        System.out.println();
+        System.out.println();*/
 
-        taskManager.deleteTask(1);
+        // Появилось
+        taskManager.getTask(1);
+        taskManager.getTask(2);
+        taskManager.getEpic(3);
+        taskManager.getSubTask(4);
+        taskManager.getSubTask(5);
+        taskManager.getEpic(6);
+        taskManager.getSubTask(7);
+
+        System.out.println(taskManager.getHistory());
+
+
+
+       /* taskManager.deleteTask(1);
         taskManager.deleteSubTask(7);
         taskManager.deleteEpic(3);
 
@@ -46,7 +57,7 @@ public class Main {
         System.out.println(taskManager.getAllTasks());
         System.out.println(taskManager.getAllEpics());
         System.out.println(taskManager.getAllSubTasks());
-        System.out.println();
+        System.out.println();*/
 
     }
 }

@@ -1,5 +1,7 @@
 package service;
+
 import model.Task;
+
 import java.util.List;
 
 public interface HistoryManager {
@@ -7,5 +9,8 @@ public interface HistoryManager {
 
    List<Task> getHistory();
 
-    void addInHistory(Task task);
+    void add(Task task);
+
+    void removeFromHistory(int id);
+
 }
