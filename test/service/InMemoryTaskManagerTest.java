@@ -1,10 +1,13 @@
 package service;
 
-import model.*;
+import model.Epic;
+import model.Status;
+import model.SubTask;
+import model.Task;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import java.util.Objects;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class InMemoryTaskManagerTest {
@@ -51,18 +54,15 @@ public class InMemoryTaskManagerTest {
         assertFalse(check);
     }
 
-    @DisplayName("HistoryManager должен сохранять предыдущую версию задачи и ее данных")
+    @DisplayName("HistoryManager должен сохранять последнюю версию задачи и ее данных")
     @Test
     void shouldCheckTasksInHistoryManager(){
-        Task task1 =  memoryTaskManager.getTask(task.getId());
         memoryTaskManager.updateTask(new Task(1,"Старая задача", Status.DONE, "Задача 1 выполнена"));
-        Task updateTask1 = memoryTaskManager.getTask(1);
-        assertEquals(2,memoryTaskManager.getHistory().size(),"Значения должны совпадать");
-        assertEquals(task1, memoryTaskManager.getHistory().get(0),"Задачи должны совпадать");
-        assertEquals(updateTask1, memoryTaskManager.getHistory().get(1),"Задачи должны совпадать");
+        Task task1 = memoryTaskManager.getTask(1);
+        assertEquals(memoryTaskManager.getAllTasks(), memoryTaskManager.getHistory(), "Значения должны совпадать");
+        //assertEquals(task1, updateTask1,"Задачи должны совпадать");
     }
 
-    //Проверки не входящие в ТЗ 5
 
     @DisplayName("Проверка удаления задачи из менеджера")
     @Test

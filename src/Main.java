@@ -20,23 +20,22 @@ public class Main {
         taskManager.createSubTask(new SubTask("Перевести текст", NEW, "Про кошку", Project.getId()));
         taskManager.createSubTask(new SubTask("Выучить слова", DONE, "задача выполнена вчера", Project.getId()));
 
-
         Epic Travel = taskManager.createEpic(new Epic("Поездка в Грузию", "В Тбилиси"));
         taskManager.createSubTask(new SubTask("Взять вещи", NEW, "одежда, обувь, продукты", Travel.getId()));
 
 
-        /*System.out.println(taskManager.getAllTasks());
+        System.out.println(taskManager.getAllTasks());
         System.out.println(taskManager.getAllEpics());
         System.out.println(taskManager.getAllSubTasks());
-        System.out.println();*/
+        System.out.println();
 
         taskManager.updateEpic(new Epic(6, "Поездка в Узбекистан", NEW, "в Ташкент"));
-        /*System.out.println(taskManager.getAllTasks());
+        System.out.println(taskManager.getAllTasks());
         System.out.println(taskManager.getAllEpics());
         System.out.println(taskManager.getAllSubTasks());
-        System.out.println();*/
+        System.out.println();
 
-        // Появилось
+
         taskManager.getTask(1);
         taskManager.getTask(2);
         taskManager.getEpic(3);
@@ -46,18 +45,6 @@ public class Main {
         taskManager.getSubTask(7);
 
         System.out.println(taskManager.getHistory());
-
-
-
-       /* taskManager.deleteTask(1);
-        taskManager.deleteSubTask(7);
-        taskManager.deleteEpic(3);
-
-
-        System.out.println(taskManager.getAllTasks());
-        System.out.println(taskManager.getAllEpics());
-        System.out.println(taskManager.getAllSubTasks());
-        System.out.println();*/
 
     }
 }

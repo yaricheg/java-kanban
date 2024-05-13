@@ -14,33 +14,6 @@ class InMemoryHistoryManagerTest {
     private List<Task> listOfTasks = new ArrayList<>();
     private HistoryManager inMemoryHistoryManager = Managers.getDefaultHistory();
 
-    /*
-    @BeforeEach
-    void BeforeEach() {
-
-        for (int i = 1; i <= 12; i++) {
-            task = new Task(i, "Новая задача", Status.NEW, "Задача " + i);
-            listOfTasks.add(task);
-            inMemoryHistoryManager.addInHistory(task);
-
-        }
-    }
-
-    @Test
-    void checkAdd() {
-        assertEquals(10, inMemoryHistoryManager.getHistory().size());
-    }
-
-    @Test
-    void checkGetHistory(){
-        Task taskCheck = listOfTasks.get(11);
-        assertEquals(taskCheck, inMemoryHistoryManager.getHistory().get(9));
-    }
-    */
-
-
-    // появилось
-
     @Test
     void testRemoveFirst() {
         InMemoryHistoryManager manager = new InMemoryHistoryManager();
@@ -81,6 +54,5 @@ class InMemoryHistoryManagerTest {
 
         manager.removeFromHistory(3);
         assertEquals(manager.getHistory(), List.of(task1, task2));
-
     }
 }
