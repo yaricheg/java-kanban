@@ -45,7 +45,6 @@ public class Main {
         taskManager.getSubTask(7);
 
         System.out.println(taskManager.getHistory());
-
     }
 }
 

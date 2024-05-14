@@ -27,7 +27,7 @@ public interface TaskManager {
     // c
     Task getTask(int id);
 
-    Epic  getEpic(int id);
+    Epic getEpic(int id);
 
     SubTask getSubTask(int id);
 
@@ -53,6 +53,5 @@ public interface TaskManager {
     void deleteSubTask(int id);
 
     List<Task> getHistory();
-
 
 }
