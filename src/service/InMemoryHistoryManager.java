@@ -75,7 +75,7 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     // Реализация метода getHistory должна перекладывать задачи из связного списка
     // в ArrayList для формирования ответа.
-    public List<Task> getHistory() {//
+    public List<Task> getHistory() {
         ArrayList<Task> list = new ArrayList<>();
         Node current = first;
         while (current != null) {
