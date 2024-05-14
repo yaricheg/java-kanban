@@ -16,12 +16,12 @@ public class Main {
         taskManager.createTask(new Task("Сходить в кино", NEW, "С друзьями в 19:00"));
         taskManager.createTask(new Task("Сходить в магазин", NEW, "Купить помидоры и огурцы"));
 
-        Epic Project = taskManager.createEpic(new Epic("Сдача проекта", "По английскому языку"));
-        taskManager.createSubTask(new SubTask("Перевести текст", NEW, "Про кошку", Project.getId()));
-        taskManager.createSubTask(new SubTask("Выучить слова", DONE, "задача выполнена вчера", Project.getId()));
+        Epic project = taskManager.createEpic(new Epic("Сдача проекта", "По английскому языку"));
+        taskManager.createSubTask(new SubTask("Перевести текст", NEW, "Про кошку", project.getId()));
+        taskManager.createSubTask(new SubTask("Выучить слова", DONE, "задача выполнена вчера", project.getId()));
 
-        Epic Travel = taskManager.createEpic(new Epic("Поездка в Грузию", "В Тбилиси"));
-        taskManager.createSubTask(new SubTask("Взять вещи", NEW, "одежда, обувь, продукты", Travel.getId()));
+        Epic travel = taskManager.createEpic(new Epic("Поездка в Грузию", "В Тбилиси"));
+        taskManager.createSubTask(new SubTask("Взять вещи", NEW, "одежда, обувь, продукты", travel.getId()));
 
 
         System.out.println(taskManager.getAllTasks());
