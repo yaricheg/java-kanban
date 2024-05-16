@@ -78,12 +78,9 @@ public class InMemoryHistoryManager implements HistoryManager {
         if (prevNode == null) {
             first = nextNode;
             nextNode.prev = null;
-        }
-        //Если удаляется последняя нода
-        else if (nextNode == null) {
+        } else if (nextNode == null) {
             last = prevNode;
             prevNode.next = null;
-
         } else {
             prevNode.next = nextNode;
             nextNode.prev = prevNode;
