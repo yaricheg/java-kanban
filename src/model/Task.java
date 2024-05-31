@@ -21,6 +21,9 @@ public class Task {
         this.description = description;
     }
 
+    public Integer getEpic() {
+        return null;
+    }
     public int getId() {
         return id;
     }
@@ -51,6 +54,10 @@ public class Task {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public TaskType getType() {
+        return TaskType.TASK;
     }
 
     @Override

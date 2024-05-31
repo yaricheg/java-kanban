@@ -12,8 +12,14 @@ public class SubTask extends Task {
         super(id, name, status, description);
     }
 
-    public int getEpic() {
+    @Override
+    public Integer getEpic() {
         return idEpic;
+    }
+
+    @Override
+    public TaskType getType() {
+        return TaskType.SUBTASK;
     }
 
     public void setEpic(int idEpic) {

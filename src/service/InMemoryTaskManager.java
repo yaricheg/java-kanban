@@ -11,6 +11,7 @@ import java.util.List;
 
 public class InMemoryTaskManager implements TaskManager {
 
+    public HashMap<Integer, Task> allTasks;
     private HashMap<Integer, Task> tasks;
     private HashMap<Integer, Epic> epics;
     private HashMap<Integer, SubTask> subtasks;
@@ -23,6 +24,7 @@ public class InMemoryTaskManager implements TaskManager {
         this.tasks = new HashMap<>();
         this.epics = new HashMap<>();
         this.subtasks = new HashMap<>();
+        this.allTasks = new HashMap<>();
     }
 
     private int generateId() {
@@ -130,6 +132,7 @@ public class InMemoryTaskManager implements TaskManager {
     public Task createTask(Task task) {
         task.setId(generateId());
         tasks.put(task.getId(), task);
+        allTasks.put(task.getId(), task);
         return task;
     }
 
@@ -137,6 +140,7 @@ public class InMemoryTaskManager implements TaskManager {
     public Epic createEpic(Epic epic) {
         epic.setId(generateId());
         epics.put(epic.getId(), epic);
+        allTasks.put(epic.getId(), epic);
         return epic;
     }
 
@@ -145,6 +149,7 @@ public class InMemoryTaskManager implements TaskManager {
     public SubTask createSubTask(SubTask subtask) {
         subtask.setId(generateId());
         subtasks.put(subtask.getId(), subtask);
+        allTasks.put(subtask.getId(), subtask);
         Epic epic = epics.get(subtask.getEpic());
         epic.addSubTask(subtask.getId());
         calculateStatus(epic);
@@ -154,7 +159,11 @@ public class InMemoryTaskManager implements TaskManager {
     //e
     @Override
     public void updateTask(Task task) {
+        if (tasks.get(task.getId()) == null) {
+            throw new NotFoundException("Задача не найдена ");
+        }
         tasks.put(task.getId(), task);
+        allTasks.put(task.getId(), task);
 
     }
 
@@ -162,11 +171,12 @@ public class InMemoryTaskManager implements TaskManager {
     public void updateEpic(Epic epic) {
         Epic saved = epics.get(epic.getId());
         if (saved == null) {
-            return;
+            throw new NotFoundException("Эпик не найден ");
         }
         saved.setName(epic.getName());
         saved.setDescription(epic.getDescription());
         epics.put(saved.getId(), saved);
+        allTasks.put(saved.getId(), saved);
     }
 
     @Override
@@ -175,6 +185,9 @@ public class InMemoryTaskManager implements TaskManager {
         saved.setName(subtask.getName());
         saved.setStatus(subtask.getStatus());
         Epic epic = epics.get(subtask.getEpic());
+        if (epic == null) {
+            throw new NotFoundException("Эпик не найден ");
+        }
         epic.addSubTask(subtask.getId());// добавляем обновленную подзадачу
         calculateStatus(epic); // обновить статус эпика
     }
