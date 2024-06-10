@@ -15,8 +15,10 @@ import static model.Status.NEW;
 public class Main {
 
     public static void main(String[] args) {
+        // Path path = Paths.get("C:\\Users\\yaroslav\\java-kanban\\resources\\task.csv");
+        // File file = path.toFile();
         try {
-            Files.readString(Path.of("resources/task.csv"));
+            Files.readString(Path.of("C:\\Users\\yaroslav\\java-kanban\\resources\\task.csv"));
         } catch (IOException e) {
             throw new RuntimeException("Не смог прочитать: resources/task.csv ", e);
         }
@@ -59,6 +61,8 @@ public class Main {
 
         taskManager.deleteAllEpics();
         System.out.println(taskManager.getHistory());
+
+
     }
 }
 

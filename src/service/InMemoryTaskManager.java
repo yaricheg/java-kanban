@@ -11,10 +11,10 @@ import java.util.List;
 
 public class InMemoryTaskManager implements TaskManager {
 
-    public HashMap<Integer, Task> allTasks;
-    private HashMap<Integer, Task> tasks;
-    private HashMap<Integer, Epic> epics;
-    private HashMap<Integer, SubTask> subtasks;
+
+    protected HashMap<Integer, Task> tasks;
+    protected HashMap<Integer, Epic> epics;
+    protected HashMap<Integer, SubTask> subtasks;
 
     private final HistoryManager historyManager;
     private int seq = 0; // счетчик глобальный
@@ -24,7 +24,7 @@ public class InMemoryTaskManager implements TaskManager {
         this.tasks = new HashMap<>();
         this.epics = new HashMap<>();
         this.subtasks = new HashMap<>();
-        this.allTasks = new HashMap<>();
+
     }
 
     private int generateId() {
@@ -132,7 +132,7 @@ public class InMemoryTaskManager implements TaskManager {
     public Task createTask(Task task) {
         task.setId(generateId());
         tasks.put(task.getId(), task);
-        allTasks.put(task.getId(), task);
+
         return task;
     }
 
@@ -140,7 +140,7 @@ public class InMemoryTaskManager implements TaskManager {
     public Epic createEpic(Epic epic) {
         epic.setId(generateId());
         epics.put(epic.getId(), epic);
-        allTasks.put(epic.getId(), epic);
+
         return epic;
     }
 
@@ -149,7 +149,6 @@ public class InMemoryTaskManager implements TaskManager {
     public SubTask createSubTask(SubTask subtask) {
         subtask.setId(generateId());
         subtasks.put(subtask.getId(), subtask);
-        allTasks.put(subtask.getId(), subtask);
         Epic epic = epics.get(subtask.getEpic());
         epic.addSubTask(subtask.getId());
         calculateStatus(epic);
@@ -163,8 +162,6 @@ public class InMemoryTaskManager implements TaskManager {
             throw new NotFoundException("Задача не найдена ");
         }
         tasks.put(task.getId(), task);
-        allTasks.put(task.getId(), task);
-
     }
 
     @Override
@@ -176,7 +173,7 @@ public class InMemoryTaskManager implements TaskManager {
         saved.setName(epic.getName());
         saved.setDescription(epic.getDescription());
         epics.put(saved.getId(), saved);
-        allTasks.put(saved.getId(), saved);
+
     }
 
     @Override
