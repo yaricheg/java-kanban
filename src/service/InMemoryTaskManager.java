@@ -157,7 +157,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     //e
     @Override
-    public void updateTask(Task task) {
+    public void updateTask(Task task) throws NotFoundException {
         if (tasks.get(task.getId()) == null) {
             throw new NotFoundException("Задача не найдена ");
         }
@@ -250,7 +250,14 @@ public class InMemoryTaskManager implements TaskManager {
     public List<Task> getHistory() {
         return historyManager.getHistory();
     }
+
+    @Override
+    public void loadFromFile() {
+        System.out.println("Выберите другой класс:");
+    }
+
 }
+
 
 
 

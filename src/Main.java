@@ -4,9 +4,12 @@ import model.Task;
 import service.Managers;
 import service.TaskManager;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import static model.Status.DONE;
 import static model.Status.NEW;
@@ -15,16 +18,16 @@ import static model.Status.NEW;
 public class Main {
 
     public static void main(String[] args) {
-        // Path path = Paths.get("C:\\Users\\yaroslav\\java-kanban\\resources\\task.csv");
-        // File file = path.toFile();
+        Path path = Paths.get("C:\\Users\\yaroslav\\java-kanban\\resources\\task1.txt");
+        File file = path.toFile();
         try {
-            Files.readString(Path.of("C:\\Users\\yaroslav\\java-kanban\\resources\\task.csv"));
+            Files.readString(Path.of("C:\\Users\\yaroslav\\java-kanban\\resources\\task1.txt"));
         } catch (IOException e) {
-            throw new RuntimeException("Не смог прочитать: resources/task.csv ", e);
+            throw new RuntimeException("Не смог прочитать: resources/task1.txt", e);
         }
 
         Managers managers = new Managers();
-        TaskManager taskManager = managers.getDefaults();
+        TaskManager taskManager = managers.getDefaultsFile(file);
         taskManager.createTask(new Task("Сходить в кино", NEW, "С друзьями в 19:00"));
         taskManager.createTask(new Task("Сходить в магазин", NEW, "Купить помидоры и огурцы"));
 
@@ -61,6 +64,7 @@ public class Main {
 
         taskManager.deleteAllEpics();
         System.out.println(taskManager.getHistory());
+        System.out.println(Charset.defaultCharset().displayName());
 
 
     }

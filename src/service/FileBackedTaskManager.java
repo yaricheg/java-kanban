@@ -3,33 +3,31 @@ package service;
 import model.*;
 
 import java.io.*;
-import java.nio.file.Path;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
 
-    private File file;
+    private final File file;
 
-    public FileBackedTaskManager(HistoryManager historyManager) {
+    public FileBackedTaskManager(HistoryManager historyManager, File file) {
         super(historyManager);
+        this.file = file;
     }
 
-    public void setFile(Path path) {
-        file = path.toFile();
-    }
 
 
     private Task fromString(String value) {
         String[] valueSplit = value.split(",");
         int id = Integer.parseInt(valueSplit[0]);
         Status status = Status.valueOf(valueSplit[3]);
-        if (valueSplit[1] == "TASK") {
+        if (valueSplit[1].equals("TASK")) {
             return new Task(id, valueSplit[2], status, valueSplit[4]);
         }
-        if (valueSplit[1] == "EPIC") {
+        if (valueSplit[1].equals("EPIC")) {
             return new Epic(id, valueSplit[2], status, valueSplit[4]);
         }
-        if (valueSplit[1] == "SUBTASK") {
+        if (valueSplit[1].equals("SUBTASK")) {
             int getEpic = Integer.parseInt(valueSplit[5]);
             return new SubTask(id, valueSplit[2], status, valueSplit[4], getEpic);
         }
@@ -38,18 +36,19 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     // Сохранение в файл
     private void save() {
-        try (final BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
+        try (final BufferedWriter writer = new BufferedWriter(new FileWriter(file, StandardCharsets.UTF_8))) {
             // TODO Заголовок id, type, name, status, description, epic
+            writer.append("id,type,name,status,description,epic\n");
             for (Map.Entry<Integer, Task> entry : tasks.entrySet()) {
-                writer.append(toString(entry.getValue()));
+                writer.append(toStr(entry.getValue()));
                 writer.newLine();
             }
             for (Map.Entry<Integer, Epic> entry : epics.entrySet()) {
-                writer.append(toString(entry.getValue()));
+                writer.append(toStr(entry.getValue()));
                 writer.newLine();
             }
             for (Map.Entry<Integer, SubTask> entry : subtasks.entrySet()) {
-                writer.append(toString(entry.getValue()));
+                writer.append(toStr(entry.getValue()));
                 writer.newLine();
             }
             // TODO подзадачи, эпики , история
@@ -59,10 +58,11 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     }
 
-    private void loadFromFile() {
+    @Override
+    public void loadFromFile() {
         int maxId = 0;
-        try (final BufferedReader reader = new BufferedReader(new FileReader(file))) {
-
+        try (final BufferedReader reader = new BufferedReader(new FileReader(file, StandardCharsets.UTF_8))) {
+            String lineHead = reader.readLine();
             while (reader.ready()) {
                 String line = reader.readLine();
                 // Задачи
@@ -83,8 +83,8 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
 
-    private String toString(Task task) {
-        return "%d,%s,%s,%s,%s,%s,%d".formatted(task.getId(), task.getType(), task.getName(),
+    private String toStr(Task task) {
+        return "%d,%s,%s,%s,%s,%d".formatted(task.getId(), task.getType(), task.getName(),
                 task.getStatus(), task.getDescription(), task.getEpic());
     }
 
@@ -136,7 +136,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     @Override
     public void updateEpic(Epic epic) {
-        super.updateTask(epic);
+        super.updateEpic(epic);
         save();
     }
 
