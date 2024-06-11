@@ -24,6 +24,7 @@ public class Task {
     public Integer getEpic() {
         return null;
     }
+
     public int getId() {
         return id;
     }

@@ -66,7 +66,6 @@ public class Main {
         System.out.println(taskManager.getHistory());
         System.out.println(Charset.defaultCharset().displayName());
 
-
     }
 }
 
