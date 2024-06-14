@@ -17,9 +17,9 @@ class FileBackedTaskManagerTest {
     void loadData() throws IOException {
         File file = File.createTempFile("text", ".txt");
         FileBackedTaskManager fileBackedTaskManager = new FileBackedTaskManager(file);
-        fileBackedTaskManager.createTask(new Task("Сходить в кино", NEW, "С друзьями в 19:00"));
-        Epic project = fileBackedTaskManager.createEpic(new Epic("Сдача проекта", "По английскому языку"));
-        fileBackedTaskManager.createSubTask(new SubTask("Перевести текст", NEW, "Про кошку", project.getId()));
+        fileBackedTaskManager.createTask(new Task(1, "Сходить в кино", NEW, "С друзьями в 19:00"));
+        Epic project = fileBackedTaskManager.createEpic(new Epic(2, "Сдача проекта", NEW, "По английскому языку"));
+        fileBackedTaskManager.createSubTask(new SubTask(3, "Перевести текст", NEW, "Про кошку", project.getId()));
         FileBackedTaskManager fileBackedTaskManager1 = fileBackedTaskManager.loadFromFile(file);
 
         assertEquals(fileBackedTaskManager.getAllTasks(), fileBackedTaskManager1.getAllTasks());

@@ -39,7 +39,7 @@ public class Main {
         taskManager.createSubTask(new SubTask("Выучить слова", DONE, "задача выполнена вчера", project.getId()));
 
         Epic travel = taskManager.createEpic(new Epic("Поездка в Грузию", "В Тбилиси"));
-        taskManager.createSubTask(new SubTask("Взять вещи", NEW, "одежда, обувь, продукты", travel.getId()));
+        taskManager.createSubTask(new SubTask("Купить билет на самолет", NEW, "По низкой цене", travel.getId()));
 
 
         System.out.println(taskManager.getAllTasks());
@@ -66,7 +66,7 @@ public class Main {
         System.out.println(taskManager.getHistory());
         System.out.println();
 
-        taskManager.deleteAllEpics();
+        //taskManager.deleteAllEpics();
 
         FileBackedTaskManager fileBackedTaskManager;
         fileBackedTaskManager = new FileBackedTaskManager(file).loadFromFile(file);

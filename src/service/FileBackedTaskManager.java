@@ -3,32 +3,25 @@ package service;
 import model.Epic;
 import model.SubTask;
 import model.Task;
-import model.TaskType;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
+import static model.TaskType.*;
+
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
-    private static File file;
-    private static HistoryManager InMemoryHistoryManager;
-
-
-    public FileBackedTaskManager(HistoryManager historyManager, File file) {
-        super(historyManager);
-        this.file = file;
-    }
+    private File file;
 
     public FileBackedTaskManager(File file) {
-        super();
+        super(Managers.getDefaultHistory());
         this.file = file;
-
     }
 
 
     // Сохранение в файл
-    public void save() {
+    private void save() {
         try (final BufferedWriter writer = new BufferedWriter(new FileWriter(file, StandardCharsets.UTF_8))) {
             // TODO Заголовок id, type, name, status, description, epic
             writer.append("id,type,name,status,description,epic\n");
@@ -55,7 +48,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     public static FileBackedTaskManager loadFromFile(File file) {
         int maxId = 0;
         try (final BufferedReader reader = new BufferedReader(new FileReader(file, StandardCharsets.UTF_8))) {
-            FileBackedTaskManager fileBackedTaskManager = new FileBackedTaskManager(InMemoryHistoryManager, file);
+            FileBackedTaskManager fileBackedTaskManager = new FileBackedTaskManager(file);
             String lineHead = reader.readLine();
             while (reader.ready()) {
                 String line = reader.readLine();
@@ -63,12 +56,14 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                 final Task task = Converter.fromString(line);
                 //TODO добавить задачу в менеджер
                 final int id = task.getId();
-                if (task.getType() == TaskType.TASK) {
+                if (task.getType().equals(TASK)) {
                     fileBackedTaskManager.tasks.put(id, task);
-                } else if (task.getType() == TaskType.EPIC) {
+                } else if (task.getType().equals(EPIC)) {
                     fileBackedTaskManager.epics.put(id, (Epic) task);
-                } else if (task.getType() == TaskType.SUBTASK) {
+                } else if (task.getType().equals(SUBTASK)) {
                     fileBackedTaskManager.subtasks.put(id, (SubTask) task);
+                    Epic epic = fileBackedTaskManager.epics.get(task.getEpic());
+                    epic.addSubTask(task.getId());
                 }
             }
             return fileBackedTaskManager;

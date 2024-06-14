@@ -12,9 +12,9 @@ import java.util.List;
 public class InMemoryTaskManager implements TaskManager {
 
 
-    protected static HashMap<Integer, Task> tasks;
-    protected static HashMap<Integer, Epic> epics;
-    protected static HashMap<Integer, SubTask> subtasks;
+    protected HashMap<Integer, Task> tasks;
+    protected HashMap<Integer, Epic> epics;
+    protected HashMap<Integer, SubTask> subtasks;
 
     private final HistoryManager historyManager;
     private int seq = 0; // счетчик глобальный
@@ -25,13 +25,6 @@ public class InMemoryTaskManager implements TaskManager {
         this.epics = new HashMap<>();
         this.subtasks = new HashMap<>();
 
-    }
-
-    public InMemoryTaskManager() {
-        this.tasks = new HashMap<>();
-        this.epics = new HashMap<>();
-        this.subtasks = new HashMap<>();
-        historyManager = null;
     }
 
 
