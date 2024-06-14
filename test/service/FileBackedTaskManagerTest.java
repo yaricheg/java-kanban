@@ -9,32 +9,22 @@ import java.io.File;
 import java.io.IOException;
 
 import static model.Status.NEW;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class FileBackedTaskManagerTest {
 
     @Test
-    void saveData() throws IOException {
-        File file = File.createTempFile("text", ".txt");
-        Managers managers = new Managers();
-        TaskManager taskManager = managers.getDefaultsFile(file);
-        taskManager.createTask(new Task("Сходить в кино", NEW, "С друзьями в 19:00"));
-        Epic project = taskManager.createEpic(new Epic("Сдача проекта", "По английскому языку"));
-        taskManager.createSubTask(new SubTask("Перевести текст", NEW, "Про кошку", project.getId()));
-
-    }
-
-    @Test
     void loadData() throws IOException {
         File file = File.createTempFile("text", ".txt");
-        Managers managers = new Managers();
-        TaskManager taskManager = managers.getDefaultsFile(file);
-        taskManager.createTask(new Task("Сходить в кино", NEW, "С друзьями в 19:00"));
-        Epic project = taskManager.createEpic(new Epic("Сдача проекта", "По английскому языку"));
-        taskManager.createSubTask(new SubTask("Перевести текст", NEW, "Про кошку", project.getId()));
-        taskManager.loadFromFile();
-        System.out.println(taskManager.getAllTasks());
-        System.out.println(taskManager.getAllEpics());
-        System.out.println(taskManager.getAllSubTasks());
-    }
+        FileBackedTaskManager fileBackedTaskManager = new FileBackedTaskManager(file);
+        fileBackedTaskManager.createTask(new Task("Сходить в кино", NEW, "С друзьями в 19:00"));
+        Epic project = fileBackedTaskManager.createEpic(new Epic("Сдача проекта", "По английскому языку"));
+        fileBackedTaskManager.createSubTask(new SubTask("Перевести текст", NEW, "Про кошку", project.getId()));
+        FileBackedTaskManager fileBackedTaskManager1 = fileBackedTaskManager.loadFromFile(file);
 
+        assertEquals(fileBackedTaskManager.getAllTasks(), fileBackedTaskManager1.getAllTasks());
+        assertEquals(fileBackedTaskManager.getAllEpics(), fileBackedTaskManager1.getAllEpics());
+        assertEquals(fileBackedTaskManager.getAllSubTasks(), fileBackedTaskManager1.getAllSubTasks());
+
+    }
 }

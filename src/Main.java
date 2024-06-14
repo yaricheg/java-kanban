@@ -1,12 +1,13 @@
 import model.Epic;
 import model.SubTask;
 import model.Task;
+import service.FileBackedTaskManager;
+import service.HistoryManager;
 import service.Managers;
 import service.TaskManager;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -16,6 +17,8 @@ import static model.Status.NEW;
 
 
 public class Main {
+
+    private static HistoryManager InMemoryHistoryManager;
 
     public static void main(String[] args) {
         Path path = Paths.get("C:\\Users\\yaroslav\\java-kanban\\resources\\task1.txt");
@@ -61,11 +64,16 @@ public class Main {
         taskManager.getTask(1);
 
         System.out.println(taskManager.getHistory());
+        System.out.println();
 
         taskManager.deleteAllEpics();
-        System.out.println(taskManager.getHistory());
-        System.out.println(Charset.defaultCharset().displayName());
 
+        FileBackedTaskManager fileBackedTaskManager;
+        fileBackedTaskManager = new FileBackedTaskManager(file).loadFromFile(file);
+
+        System.out.println(fileBackedTaskManager.getAllEpics());
+        System.out.println(fileBackedTaskManager.getAllTasks());
+        System.out.println(fileBackedTaskManager.getAllSubTasks());
     }
 }
 
