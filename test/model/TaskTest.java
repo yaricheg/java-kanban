@@ -18,6 +18,5 @@ public class TaskTest {
     private static void assertEqualsTask(Task expected, Task actual, String message) {
         assertEquals(expected.getId(), actual.getId(), message + ", id");
         assertEquals(expected.getName(), actual.getName(), message + ", name");
-
     }
 }

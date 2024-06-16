@@ -11,9 +11,10 @@ import java.util.List;
 
 public class InMemoryTaskManager implements TaskManager {
 
-    private HashMap<Integer, Task> tasks;
-    private HashMap<Integer, Epic> epics;
-    private HashMap<Integer, SubTask> subtasks;
+
+    protected HashMap<Integer, Task> tasks;
+    protected HashMap<Integer, Epic> epics;
+    protected HashMap<Integer, SubTask> subtasks;
 
     private final HistoryManager historyManager;
     private int seq = 0; // счетчик глобальный
@@ -23,7 +24,9 @@ public class InMemoryTaskManager implements TaskManager {
         this.tasks = new HashMap<>();
         this.epics = new HashMap<>();
         this.subtasks = new HashMap<>();
+
     }
+
 
     private int generateId() {
         return ++seq;
@@ -130,6 +133,7 @@ public class InMemoryTaskManager implements TaskManager {
     public Task createTask(Task task) {
         task.setId(generateId());
         tasks.put(task.getId(), task);
+
         return task;
     }
 
@@ -137,6 +141,7 @@ public class InMemoryTaskManager implements TaskManager {
     public Epic createEpic(Epic epic) {
         epic.setId(generateId());
         epics.put(epic.getId(), epic);
+
         return epic;
     }
 
@@ -153,20 +158,23 @@ public class InMemoryTaskManager implements TaskManager {
 
     //e
     @Override
-    public void updateTask(Task task) {
+    public void updateTask(Task task) throws NotFoundException {
+        if (tasks.get(task.getId()) == null) {
+            throw new NotFoundException("Задача не найдена ");
+        }
         tasks.put(task.getId(), task);
-
     }
 
     @Override
     public void updateEpic(Epic epic) {
         Epic saved = epics.get(epic.getId());
         if (saved == null) {
-            return;
+            throw new NotFoundException("Эпик не найден ");
         }
         saved.setName(epic.getName());
         saved.setDescription(epic.getDescription());
         epics.put(saved.getId(), saved);
+
     }
 
     @Override
@@ -175,6 +183,9 @@ public class InMemoryTaskManager implements TaskManager {
         saved.setName(subtask.getName());
         saved.setStatus(subtask.getStatus());
         Epic epic = epics.get(subtask.getEpic());
+        if (epic == null) {
+            throw new NotFoundException("Эпик не найден ");
+        }
         epic.addSubTask(subtask.getId());// добавляем обновленную подзадачу
         calculateStatus(epic); // обновить статус эпика
     }
@@ -240,7 +251,9 @@ public class InMemoryTaskManager implements TaskManager {
     public List<Task> getHistory() {
         return historyManager.getHistory();
     }
+
 }
+
 
 
 
