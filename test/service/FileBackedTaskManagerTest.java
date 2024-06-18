@@ -7,6 +7,8 @@ import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.Duration;
+import java.time.LocalDateTime;
 
 import static model.Status.NEW;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -17,9 +19,11 @@ class FileBackedTaskManagerTest {
     void loadData() throws IOException {
         File file = File.createTempFile("text", ".txt");
         FileBackedTaskManager fileBackedTaskManager = new FileBackedTaskManager(file);
-        fileBackedTaskManager.createTask(new Task(1, "Сходить в кино", NEW, "С друзьями в 19:00"));
+        fileBackedTaskManager.createTask(new Task(1, "Сходить в кино", NEW, "С друзьями в 19:00",
+                LocalDateTime.of(2024, 6, 15, 12, 0), Duration.ofMinutes(30)));
         Epic project = fileBackedTaskManager.createEpic(new Epic(2, "Сдача проекта", NEW, "По английскому языку"));
-        fileBackedTaskManager.createSubTask(new SubTask(3, "Перевести текст", NEW, "Про кошку", project.getId()));
+        fileBackedTaskManager.createSubTask(new SubTask(3, "Перевести текст", NEW, "Про кошку", project.getId(),
+                LocalDateTime.of(2024, 6, 15, 15, 0), Duration.ofMinutes(30)));
         FileBackedTaskManager fileBackedTaskManager1 = fileBackedTaskManager.loadFromFile(file);
 
         assertEquals(fileBackedTaskManager.getAllTasks(), fileBackedTaskManager1.getAllTasks());

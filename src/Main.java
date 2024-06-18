@@ -11,6 +11,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.Duration;
+import java.time.LocalDateTime;
 
 import static model.Status.DONE;
 import static model.Status.NEW;
@@ -31,15 +33,20 @@ public class Main {
 
         Managers managers = new Managers();
         TaskManager taskManager = managers.getDefaultsFile(file);
-        taskManager.createTask(new Task("Сходить в кино", NEW, "С друзьями в 19:00"));
-        taskManager.createTask(new Task("Сходить в магазин", NEW, "Купить помидоры и огурцы"));
+        taskManager.createTask(new Task("Сходить в кино", NEW, "С друзьями в 19:00",
+                LocalDateTime.of(2024, 6, 25, 19, 0), Duration.ofMinutes(90)));
+        taskManager.createTask(new Task("Сходить в магазин", NEW, "Купить помидоры и огурцы",
+                LocalDateTime.of(2024, 6, 25, 12, 0), Duration.ofMinutes(60)));
 
-        Epic project = taskManager.createEpic(new Epic("Сдача проекта", "По английскому языку"));
-        taskManager.createSubTask(new SubTask("Перевести текст", NEW, "Про кошку", project.getId()));
-        taskManager.createSubTask(new SubTask("Выучить слова", DONE, "задача выполнена вчера", project.getId()));
+        Epic project = taskManager.createEpic(new Epic("Сдача проекта", NEW, "По английскому языку"));
+        taskManager.createSubTask(new SubTask("Перевести текст", NEW, "Про кошку", project.getId(),
+                LocalDateTime.of(2024, 6, 26, 10, 0), Duration.ofMinutes(120)));
+        taskManager.createSubTask(new SubTask("Выучить слова", DONE, "задача выполнена вчера", project.getId(),
+                LocalDateTime.of(2024, 6, 26, 13, 0), Duration.ofMinutes(120)));
 
-        Epic travel = taskManager.createEpic(new Epic("Поездка в Грузию", "В Тбилиси"));
-        taskManager.createSubTask(new SubTask("Купить билет на самолет", NEW, "По низкой цене", travel.getId()));
+        Epic travel = taskManager.createEpic(new Epic(6, "Поездка в Грузию", NEW, "В Тбилиси"));
+        taskManager.createSubTask(new SubTask("Купить билет на самолет", NEW, "По низкой цене", travel.getId(),
+                LocalDateTime.of(2024, 6, 26, 16, 0), Duration.ofMinutes(120)));
 
 
         System.out.println(taskManager.getAllTasks());
@@ -74,6 +81,9 @@ public class Main {
         System.out.println(fileBackedTaskManager.getAllEpics());
         System.out.println(fileBackedTaskManager.getAllTasks());
         System.out.println(fileBackedTaskManager.getAllSubTasks());
+        System.out.println();
+
+        System.out.println(taskManager.getPrioritizedTasks());
     }
 }
 

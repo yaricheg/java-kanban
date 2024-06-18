@@ -1,5 +1,7 @@
 package service;
 
+import converter.Converter;
+import exception.ManagerIOException;
 import model.Epic;
 import model.SubTask;
 import model.Task;
@@ -39,7 +41,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             }
             // TODO подзадачи, эпики , история
         } catch (IOException e) {
-            throw new ManagerSaveException("Ошибка в файле: " + file.getAbsolutePath());
+            throw new ManagerIOException("Ошибка в файле: " + file.getAbsolutePath());
         }
 
     }
@@ -64,12 +66,13 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                     fileBackedTaskManager.subtasks.put(id, (SubTask) task);
                     Epic epic = fileBackedTaskManager.epics.get(task.getEpic());
                     epic.addSubTask(task.getId());
+                    epic.addSubTaskO((SubTask) task);
                 }
             }
             return fileBackedTaskManager;
 
         } catch (IOException e) {
-            throw new ManagerSaveException("Ошибка в файле: " + file.getAbsolutePath());
+            throw new ManagerIOException("Ошибка в файле: " + file.getAbsolutePath());
         }
     }
 
@@ -148,5 +151,4 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         super.deleteSubTask(id);
         save();//обновить статус
     }
-
 }

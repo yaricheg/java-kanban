@@ -1,6 +1,7 @@
 package service;
 
 import model.Task;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -54,5 +55,28 @@ class InMemoryHistoryManagerTest {
 
         manager.removeFromHistory(3);
         assertEquals(manager.getHistory(), List.of(task1, task2));
+    }
+
+    // Добавлено в 8 проект
+    @DisplayName("Дублирование")
+    @Test
+    void testDuplication() {
+        InMemoryHistoryManager manager = new InMemoryHistoryManager();
+        Task task1 = new Task(1, "Сходить в кино", NEW, "С друзьями в пн");
+        manager.add(task1);
+        Task task2 = new Task(2, "Сходить в кино", NEW, "С друзьями в вт");
+        manager.add(task2);
+        Task task3 = new Task(3, "Сходить в кино", NEW, "С друзьями в ср");
+        manager.add(task3);
+        manager.add(task1); // дублируем добавление 1 задачи
+        assertEquals(manager.getHistory(), List.of(task2, task3, task1));
+
+    }
+
+    @DisplayName("Пустая история задач")
+    @Test
+    void testEmptyHistory() {
+        InMemoryHistoryManager manager = new InMemoryHistoryManager();
+        assertEquals(manager.getHistory().isEmpty(), true);
     }
 }
