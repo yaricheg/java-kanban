@@ -16,28 +16,22 @@ public class Task {
 
 
     public Task(int id, String name, Status status, String description, LocalDateTime startTime, Duration duration) {
-        this.id = id;
-        this.name = name;
-        this.status = status;
-        this.description = description;
+        this(id, name, status, description);
         this.startTime = startTime;
         this.duration = duration;
 
     }
 
     public Task(String name, Status status, String description, LocalDateTime startTime, Duration duration) {
-        this.name = name;
-        this.status = status;
-        this.description = description;
+        this(name, status, description);
         this.startTime = startTime;
         this.duration = duration;
     }
 
     public Task(int id, String name, Status status, String description) {
+        this(name, status, description);
         this.id = id;
-        this.name = name;
-        this.status = status;
-        this.description = description;
+
     }
 
     public Task(String name, Status status, String description) {

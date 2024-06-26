@@ -172,5 +172,4 @@ public class InMemoryTaskManagerTest {
         assertEquals(epic.getStatus(), Status.IN_PROGRESS);
     }
 
-
 }

@@ -38,13 +38,15 @@ public class Main {
         taskManager.createTask(new Task("Сходить в магазин", NEW, "Купить помидоры и огурцы",
                 LocalDateTime.of(2024, 6, 25, 12, 0), Duration.ofMinutes(60)));
 
-        Epic project = taskManager.createEpic(new Epic("Сдача проекта", NEW, "По английскому языку"));
+        Epic project = taskManager.createEpic(new Epic("Сдача проекта", NEW, "По английскому языку",
+                LocalDateTime.of(2025, 6, 26, 10, 0), Duration.ofMinutes(120)));
         taskManager.createSubTask(new SubTask("Перевести текст", NEW, "Про кошку", project.getId(),
                 LocalDateTime.of(2024, 6, 26, 10, 0), Duration.ofMinutes(120)));
         taskManager.createSubTask(new SubTask("Выучить слова", DONE, "задача выполнена вчера", project.getId(),
                 LocalDateTime.of(2024, 6, 26, 13, 0), Duration.ofMinutes(120)));
 
-        Epic travel = taskManager.createEpic(new Epic(6, "Поездка в Грузию", NEW, "В Тбилиси"));
+        Epic travel = taskManager.createEpic(new Epic(6, "Поездка в Грузию", NEW, "В Тбилиси",
+                LocalDateTime.of(2026, 6, 26, 10, 0), Duration.ofMinutes(120)));
         taskManager.createSubTask(new SubTask("Купить билет на самолет", NEW, "По низкой цене", travel.getId(),
                 LocalDateTime.of(2024, 6, 26, 16, 0), Duration.ofMinutes(120)));
 

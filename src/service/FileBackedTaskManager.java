@@ -48,10 +48,8 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
 
     public static FileBackedTaskManager loadFromFile(File file) {
-        int maxId = 0;
         try (final BufferedReader reader = new BufferedReader(new FileReader(file, StandardCharsets.UTF_8))) {
             FileBackedTaskManager fileBackedTaskManager = new FileBackedTaskManager(file);
-            String lineHead = reader.readLine();
             while (reader.ready()) {
                 String line = reader.readLine();
                 // Задачи
@@ -66,8 +64,8 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                     fileBackedTaskManager.subtasks.put(id, (SubTask) task);
                     Epic epic = fileBackedTaskManager.epics.get(task.getEpic());
                     epic.addSubTask(task.getId());
-                    epic.addSubTaskO((SubTask) task);
                 }
+                prioritizedTasks.add(task);
             }
             return fileBackedTaskManager;
 
