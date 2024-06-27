@@ -47,8 +47,8 @@ public class InMemoryTaskManager implements TaskManager {
                 if (t.getId() == task.getId()) {
                     continue;
                 }
-                if (task.getEndTime().isBefore(t.getStartTime()) ||
-                        task.getStartTime().isAfter(t.getEndTime())) {
+                if ((task.getStartTime().plus(task.getDuration())).isBefore(t.getStartTime()) ||
+                        task.getStartTime().isAfter(t.getStartTime().plus(task.getDuration()))) {
                     continue;
                 }
                 throw new ValidationException("Пересечение с задачей " + t.getId());
@@ -296,28 +296,33 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
 
-    public void getStartTimeEpic(Epic epic) {
+    public LocalDateTime getStartTimeEpic(Epic epic) {
         LocalDateTime startTime = LocalDateTime.of(2100, 12, 31, 12, 30);
         for (Integer id : epic.getSubTasks()) {
             if (subtasks.get(id).getStartTime().isBefore(startTime)) {
                 startTime = subtasks.get(id).getStartTime();
             }
+
         }
         epic.setStartTime(startTime);
+        return startTime;
     }
 
     public void getDuration(Epic epic) {
-        epic.setDuration(Duration.between(epic.getStartTime(), epic.getEndTime()));
+        Duration duration = Duration.between(getStartTimeEpic(epic), getEndTimeEpic(epic));
+        epic.setDuration(duration);
     }
 
-    public void getEndTimeEpic(Epic epic) {
+    public LocalDateTime getEndTimeEpic(Epic epic) {
         LocalDateTime endTime = LocalDateTime.of(2000, 12, 31, 12, 30);
         for (Integer id : epic.getSubTasks()) {
-            if (subtasks.get(id).getEndTime().isAfter(endTime)) {
-                endTime = subtasks.get(id).getEndTime();
+            if (subtasks.get(id).getStartTime().plus(subtasks.get(id).getDuration()).isAfter(endTime)) {
+                endTime = subtasks.get(id).getStartTime().plus(subtasks.get(id).getDuration());
             }
+
         }
         epic.setEndTime(endTime);
+        return endTime;
     }
 
     @Override
