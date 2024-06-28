@@ -14,36 +14,28 @@ import java.time.LocalDateTime;
 import static model.Status.NEW;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class FileBackedTaskManagerTest {
+public class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskManager> {
     FileBackedTaskManagerTest() throws IOException {
     }
 
-    FileBackedTaskManager fileBackedTaskManager;
     File file = File.createTempFile("text", ".txt");
 
+    @Override
     @BeforeEach
     void init() throws IOException {
-        fileBackedTaskManager = new FileBackedTaskManager(file);
-        fileBackedTaskManager.createTask(new Task(1, "Сходить в кино", NEW, "С друзьями в 19:00",
-                LocalDateTime.of(2024, 6, 15, 12, 0), Duration.ofMinutes(30)));
-        Epic project = fileBackedTaskManager.createEpic(new Epic(2, "Сдача проекта", NEW, "По английскому языку",
-                LocalDateTime.of(2025, 6, 15, 12, 0), Duration.ofMinutes(30)));
-        fileBackedTaskManager.createSubTask(new SubTask(3, "Перевести текст", NEW, "Про кошку", project.getId(),
-                LocalDateTime.of(2024, 6, 15, 15, 0), Duration.ofMinutes(30)));
+        taskManager = new FileBackedTaskManager(file);
+        task = taskManager.createTask(new Task("Новая задача", NEW, "Задача 1",
+                LocalDateTime.of(2024, 7, 12, 12, 12), Duration.ofMinutes(30)));
+        epic = taskManager.createEpic(new Epic(6, "Новый Эпик", NEW, "Задача 1",
+                LocalDateTime.of(2027, 7, 12, 12, 12), Duration.ofMinutes(30)));
+        subTask = taskManager.createSubTask(new SubTask("Новая подзадача", NEW, "подзадача 1", epic.getId(),
+                LocalDateTime.of(2024, 6, 12, 12, 12), Duration.ofMinutes(30)));
 
-    }
-
-    @Test
-    void loadData() throws IOException {
-        FileBackedTaskManager fileBackedTaskManager1 = fileBackedTaskManager.loadFromFile(file);
-        assertEquals(fileBackedTaskManager.getAllTasks(), fileBackedTaskManager1.getAllTasks());
-        assertEquals(fileBackedTaskManager.getAllEpics(), fileBackedTaskManager1.getAllEpics());
-        assertEquals(fileBackedTaskManager.getAllSubTasks(), fileBackedTaskManager1.getAllSubTasks());
     }
 
     @Test
     void CheckSorted() throws IOException {
-
-
+        FileBackedTaskManager fileBackedTaskManager1 = taskManager.loadFromFile(file);
+        assertEquals(taskManager.getPrioritizedTasks(), fileBackedTaskManager1.getPrioritizedTasks());
     }
 }
