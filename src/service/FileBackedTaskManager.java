@@ -15,7 +15,7 @@ import static model.TaskType.*;
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
     private File file;
-    static protected int maxId = 0;
+    private static int maxId = 0;
 
     public FileBackedTaskManager(File file) {
         super(Managers.getDefaultHistory());
