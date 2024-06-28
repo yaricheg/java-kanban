@@ -18,8 +18,8 @@ class InMemoryHistoryManagerTest {
     @BeforeEach
     void init() {
         historyManager = Managers.getDefaultHistory();
-
     }
+
     @Test
     void testRemoveFirst() {
         Task task1 = new Task(1, "Сходить в кино", NEW, "С друзьями в пн");
@@ -28,7 +28,6 @@ class InMemoryHistoryManagerTest {
         historyManager.add(task2);
         Task task3 = new Task(3, "Сходить в кино", NEW, "С друзьями в ср");
         historyManager.add(task3);
-
         historyManager.removeFromHistory(1);
         assertEquals(historyManager.getHistory(), List.of(task2, task3));
     }
@@ -41,7 +40,6 @@ class InMemoryHistoryManagerTest {
         historyManager.add(task2);
         Task task3 = new Task(3, "Сходить в кино", NEW, "С друзьями в ср");
         historyManager.add(task3);
-
         historyManager.removeFromHistory(2);
         assertEquals(historyManager.getHistory(), List.of(task1, task3));
     }
@@ -54,7 +52,6 @@ class InMemoryHistoryManagerTest {
         historyManager.add(task2);
         Task task3 = new Task(3, "Сходить в кино", NEW, "С друзьями в ср");
         historyManager.add(task3);
-
         historyManager.removeFromHistory(3);
         assertEquals(historyManager.getHistory(), List.of(task1, task2));
     }
