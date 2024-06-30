@@ -1,5 +1,7 @@
 package service;
 
+import converter.Converter;
+import exception.ManagerIOException;
 import model.Epic;
 import model.SubTask;
 import model.Task;
@@ -18,7 +20,6 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         super(Managers.getDefaultHistory());
         this.file = file;
     }
-
 
     // Сохранение в файл
     private void save() {
@@ -39,17 +40,16 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             }
             // TODO подзадачи, эпики , история
         } catch (IOException e) {
-            throw new ManagerSaveException("Ошибка в файле: " + file.getAbsolutePath());
+            throw new ManagerIOException("Ошибка в файле: " + file.getAbsolutePath());
         }
-
     }
 
 
-    public static FileBackedTaskManager loadFromFile(File file) {
-        int maxId = 0;
+    public FileBackedTaskManager loadFromFile(File file) {
         try (final BufferedReader reader = new BufferedReader(new FileReader(file, StandardCharsets.UTF_8))) {
+            int maxId = 0;
             FileBackedTaskManager fileBackedTaskManager = new FileBackedTaskManager(file);
-            String lineHead = reader.readLine();
+            reader.readLine();
             while (reader.ready()) {
                 String line = reader.readLine();
                 // Задачи
@@ -58,18 +58,24 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                 final int id = task.getId();
                 if (task.getType().equals(TASK)) {
                     fileBackedTaskManager.tasks.put(id, task);
+                    fileBackedTaskManager.prioritizedTasks.add(task);
                 } else if (task.getType().equals(EPIC)) {
                     fileBackedTaskManager.epics.put(id, (Epic) task);
                 } else if (task.getType().equals(SUBTASK)) {
                     fileBackedTaskManager.subtasks.put(id, (SubTask) task);
                     Epic epic = fileBackedTaskManager.epics.get(task.getEpic());
                     epic.addSubTask(task.getId());
+                    fileBackedTaskManager.prioritizedTasks.add(task);
+                }
+                if (id > maxId) {
+                    maxId = id;
                 }
             }
+            fileBackedTaskManager.seq = maxId;
             return fileBackedTaskManager;
 
         } catch (IOException e) {
-            throw new ManagerSaveException("Ошибка в файле: " + file.getAbsolutePath());
+            throw new ManagerIOException("Ошибка в файле: " + file.getAbsolutePath());
         }
     }
 
@@ -127,7 +133,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     @Override
     public void updateSubTask(SubTask subtask) { // принимать только subTask
-        super.updateTask(subtask);
+        super.updateSubTask(subtask);
         save();
     }
 
@@ -148,5 +154,4 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         super.deleteSubTask(id);
         save();//обновить статус
     }
-
 }
