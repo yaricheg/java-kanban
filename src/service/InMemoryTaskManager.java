@@ -22,8 +22,8 @@ public class InMemoryTaskManager implements TaskManager {
     protected HashMap<Integer, Epic> epics;
     protected HashMap<Integer, SubTask> subtasks;
 
-    protected static TaskComparator taskComparator = new TaskComparator();
-    protected static TreeSet<Task> prioritizedTasks = new TreeSet<>(taskComparator);
+    protected TaskComparator taskComparator = new TaskComparator();
+    protected TreeSet<Task> prioritizedTasks = new TreeSet<>(taskComparator);
 
     private final HistoryManager historyManager;
 
@@ -49,8 +49,8 @@ public class InMemoryTaskManager implements TaskManager {
                 if (t.getId() == task.getId()) {
                     continue;
                 }
-                if ((task.getStartTime().plus(task.getDuration())).isBefore(t.getStartTime()) ||
-                        task.getStartTime().isAfter(t.getStartTime().plus(task.getDuration()))) {
+                if (task.getEndTime().isBefore(t.getStartTime()) ||
+                        task.getStartTime().isAfter(t.getEndTime())) {
                     continue;
                 }
                 throw new ValidationException("Пересечение с задачей " + t.getId());
@@ -65,7 +65,7 @@ public class InMemoryTaskManager implements TaskManager {
         return new ArrayList<>(prioritizedTasks);
     }
 
-    private void addPrioritizedTasks(Task task) {
+    public void addPrioritizedTasks(Task task) {
         prioritizedTasks.add(task);
     }
 
@@ -189,9 +189,7 @@ public class InMemoryTaskManager implements TaskManager {
         subtasks.put(subtask.getId(), subtask);
         Epic epic = epics.get(subtask.getEpic());
         epic.addSubTask(subtask.getId());
-        getStartTimeEpic(epic);
-        getEndTimeEpic(epic);
-        getDuration(epic);
+        getTimeEpic(epic);
         calculateStatus(epic);
         return subtask;
     }
@@ -237,9 +235,7 @@ public class InMemoryTaskManager implements TaskManager {
             throw new NotFoundException("Подзадача не найдена ");
         }
         epic.addSubTask(subtask.getId()); // добавляем обновленную подзадачу
-        getStartTimeEpic(epic); // рассчитываем новое время эпика
-        getEndTimeEpic(epic);
-        getDuration(epic);
+        getTimeEpic(epic);
         calculateStatus(epic); // обновить статус эпика
     }
 
@@ -270,9 +266,7 @@ public class InMemoryTaskManager implements TaskManager {
         epic.removeSubTask(id);
         historyManager.removeFromHistory(id);
         prioritizedTasks.remove(subtasks.get(id));
-        getStartTimeEpic(epic); // рассчитываем новое время эпика
-        getEndTimeEpic(epic);
-        getDuration(epic);
+        getTimeEpic(epic);
         subtasks.remove(id);
         calculateStatus(epic);//обновить статус
     }
@@ -305,34 +299,25 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
 
-    public LocalDateTime getStartTimeEpic(Epic epic) {
+    private LocalDateTime getTimeEpic(Epic epic) {
         LocalDateTime startTime = LocalDateTime.of(2100, 12, 31, 12, 30);
+        LocalDateTime endTime = LocalDateTime.of(2000, 12, 31, 12, 30);
         for (Integer id : epic.getSubTasks()) {
             if (subtasks.get(id).getStartTime().isBefore(startTime)) {
                 startTime = subtasks.get(id).getStartTime();
             }
-
-        }
-        epic.setStartTime(startTime);
-        return startTime;
-    }
-
-    public void getDuration(Epic epic) {
-        Duration duration = Duration.between(getStartTimeEpic(epic), getEndTimeEpic(epic));
-        epic.setDuration(duration);
-    }
-
-    public LocalDateTime getEndTimeEpic(Epic epic) {
-        LocalDateTime endTime = LocalDateTime.of(2000, 12, 31, 12, 30);
-        for (Integer id : epic.getSubTasks()) {
             if (subtasks.get(id).getStartTime().plus(subtasks.get(id).getDuration()).isAfter(endTime)) {
                 endTime = subtasks.get(id).getStartTime().plus(subtasks.get(id).getDuration());
             }
 
         }
+        epic.setStartTime(startTime);
         epic.setEndTime(endTime);
+        Duration duration = Duration.between(startTime, endTime);
+        epic.setDuration(duration);
         return endTime;
     }
+
 
     @Override
     public List<Task> getHistory() {

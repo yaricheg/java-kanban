@@ -3,6 +3,7 @@ package service;
 import model.Epic;
 import model.SubTask;
 import model.Task;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -12,7 +13,6 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 
 import static model.Status.NEW;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskManager> {
     FileBackedTaskManagerTest() throws IOException {
@@ -35,7 +35,8 @@ public class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskMan
 
     @Test
     void CheckSorted() throws IOException {
-        FileBackedTaskManager fileBackedTaskManager1 = taskManager.loadFromFile(file);
-        assertEquals(taskManager.getPrioritizedTasks(), fileBackedTaskManager1.getPrioritizedTasks());
+
+        Assertions.assertEquals(taskManager.getPrioritizedTasks(),
+                new FileBackedTaskManager(file).loadFromFile(file).getPrioritizedTasks());
     }
 }

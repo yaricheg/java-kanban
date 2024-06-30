@@ -15,21 +15,11 @@ import static model.TaskType.*;
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
     private File file;
-    private static int maxId = 0;
 
     public FileBackedTaskManager(File file) {
         super(Managers.getDefaultHistory());
         this.file = file;
     }
-
-    @Override
-    protected int generateId() {
-        if (maxId == 0) {
-            return seq++;
-        }
-        return maxId++;
-    }
-
 
     // Сохранение в файл
     private void save() {
@@ -56,9 +46,9 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
 
-    public static FileBackedTaskManager loadFromFile(File file) {
+    public FileBackedTaskManager loadFromFile(File file) {
         try (final BufferedReader reader = new BufferedReader(new FileReader(file, StandardCharsets.UTF_8))) {
-            maxId = 0;
+            int maxId = 0;
             FileBackedTaskManager fileBackedTaskManager = new FileBackedTaskManager(file);
             reader.readLine();
             while (reader.ready()) {
@@ -69,17 +59,20 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                 final int id = task.getId();
                 if (task.getType().equals(TASK)) {
                     fileBackedTaskManager.tasks.put(id, task);
-                    prioritizedTasks.add(task);
+                    addPrioritizedTasks(task);
                 } else if (task.getType().equals(EPIC)) {
                     fileBackedTaskManager.epics.put(id, (Epic) task);
                 } else if (task.getType().equals(SUBTASK)) {
                     fileBackedTaskManager.subtasks.put(id, (SubTask) task);
                     Epic epic = fileBackedTaskManager.epics.get(task.getEpic());
                     epic.addSubTask(task.getId());
-                    prioritizedTasks.add(task);
+                    addPrioritizedTasks(task);
                 }
-                maxId++;
+                if (id > maxId) {
+                    maxId = id;
+                }
             }
+            fileBackedTaskManager.seq = maxId;
             return fileBackedTaskManager;
 
         } catch (IOException e) {
