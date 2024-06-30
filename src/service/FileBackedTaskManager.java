@@ -42,7 +42,6 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         } catch (IOException e) {
             throw new ManagerIOException("Ошибка в файле: " + file.getAbsolutePath());
         }
-
     }
 
 
@@ -59,14 +58,14 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                 final int id = task.getId();
                 if (task.getType().equals(TASK)) {
                     fileBackedTaskManager.tasks.put(id, task);
-                    addPrioritizedTasks(task);
+                    fileBackedTaskManager.prioritizedTasks.add(task);
                 } else if (task.getType().equals(EPIC)) {
                     fileBackedTaskManager.epics.put(id, (Epic) task);
                 } else if (task.getType().equals(SUBTASK)) {
                     fileBackedTaskManager.subtasks.put(id, (SubTask) task);
                     Epic epic = fileBackedTaskManager.epics.get(task.getEpic());
                     epic.addSubTask(task.getId());
-                    addPrioritizedTasks(task);
+                    fileBackedTaskManager.prioritizedTasks.add(task);
                 }
                 if (id > maxId) {
                     maxId = id;

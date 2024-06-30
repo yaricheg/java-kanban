@@ -17,7 +17,6 @@ import java.util.stream.Collectors;
 
 public class InMemoryTaskManager implements TaskManager {
 
-
     protected HashMap<Integer, Task> tasks;
     protected HashMap<Integer, Epic> epics;
     protected HashMap<Integer, SubTask> subtasks;
@@ -65,7 +64,7 @@ public class InMemoryTaskManager implements TaskManager {
         return new ArrayList<>(prioritizedTasks);
     }
 
-    public void addPrioritizedTasks(Task task) {
+    protected void addPrioritizedTasks(Task task) {
         prioritizedTasks.add(task);
     }
 
@@ -109,7 +108,6 @@ public class InMemoryTaskManager implements TaskManager {
         tasks.clear();
     }
 
-
     @Override
     public void deleteAllEpics() {
         subtasks.keySet().stream()
@@ -123,7 +121,6 @@ public class InMemoryTaskManager implements TaskManager {
         epics.clear();
     }
 
-
     @Override
     public void deleteAllSubTasks() {
         subtasks.keySet().stream()
@@ -132,10 +129,15 @@ public class InMemoryTaskManager implements TaskManager {
                     prioritizedTasks.remove(subtasks.get(id));
                 });
         epics.values().stream()
-                .forEach(epic -> epic.getSubTasks().clear());
-        subtasks.clear();
-    }
+                .forEach(epic -> {
+                    epic.getSubTasks().clear();
+                    epic.setStartTime(null);
+                    epic.setEndTime(null);
 
+                });
+        subtasks.clear();
+
+    }
 
     // c
     @Override
