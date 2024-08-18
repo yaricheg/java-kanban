@@ -13,7 +13,7 @@ public interface TaskManager {
 
     List<SubTask> getSubTasks();
 
-    List<SubTask> getEpicSubtasks(Epic epic);
+    List<SubTask> getEpicSubtasks(Integer id);
 
     List<Task> getPrioritizedTasks();
 

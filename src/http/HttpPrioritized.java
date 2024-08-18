@@ -16,9 +16,13 @@ public class HttpPrioritized extends BaseHttpHandler {
     public void handle(HttpExchange httpExchange) throws IOException {
         String response;
         String method = httpExchange.getRequestMethod();
-        response = HttpTaskServer.getJson().toJson(taskManager.getPrioritizedTasks());
-        sendText(httpExchange, response, 200);
-
+        if (method.equals("GET")) {
+            response = HttpTaskServer.getJson().toJson(taskManager.getPrioritizedTasks());
+            sendText(httpExchange, response, 200);
+        } else {
+            response = "Некорректный метод";
+            sendText(httpExchange, response, 200);
+        }
     }
 }
 

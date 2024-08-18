@@ -28,7 +28,7 @@ public class HttpTasks extends BaseHttpHandler {
 
     @Override
     public void handle(HttpExchange httpExchange) throws IOException {
-        String response;
+        String response = null;
         String method = httpExchange.getRequestMethod();
         System.out.println(method);
         Integer id = getIdFromPath(httpExchange.getRequestURI().getPath());
@@ -62,20 +62,21 @@ public class HttpTasks extends BaseHttpHandler {
                 taskManager.updateTask(new Task(id, name, status, description,
                         startTime, Duration.ofMinutes(duration)));
                 System.out.println("Действие выполнено");
-                response = HttpTaskServer.getJson().toJson(taskManager.getTaskById(id));
+                //response = HttpTaskServer.getJson().toJson(taskManager.getTaskById(id));
                 sendText(httpExchange, response, 201);
                 System.out.println("Действие try выполнено");
             } catch (NotFoundException e) {
                 taskManager.createTask(new Task(name, status, description,
                         startTime, Duration.ofMinutes(duration)));
                 System.out.println("Выполнено 1");
-                response = HttpTaskServer.getJson().toJson(taskManager.getTaskById(id));
+                //response = HttpTaskServer.getJson().toJson(taskManager.getTaskById(id));
+                //response = "Задача добавлена";
                 System.out.println("Выполнено 2");
-                sendText(httpExchange, response, 201);
+                sendText(httpExchange, "Задача добавлена", 201);
                 System.out.println("Действие catch выполнено");
             } catch (ValidationException e) {
                 response = sendHasInteractions("Задача");
-                sendText(httpExchange, response, 404);
+                sendText(httpExchange, response, 406);
 
             }
 

@@ -87,14 +87,12 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public List<SubTask> getEpicSubtasks(Epic epic) {
-        List<SubTask> subtasksList = epic.getSubTasks()
+    public List<SubTask> getEpicSubtasks(Integer idEpic) {
+        List<SubTask> subtasksList = epics.get(idEpic).getSubTasks()
                 .stream()
-                .map(id -> subtasks.get(id))
+                .map(idSubtask -> subtasks.get(idSubtask))
                 .collect(Collectors.toList());
         return subtasksList;
-
-
     }
 
     //b

@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.sun.net.httpserver.HttpExchange;
 import exception.NotFoundException;
+import exception.ValidationException;
 import model.Epic;
 import model.Status;
 import service.TaskManager;
@@ -24,7 +25,7 @@ public class HttpEpics extends BaseHttpHandler {
 
     @Override
     public void handle(HttpExchange httpExchange) throws IOException {
-        String response;
+        String response = null;
         String method = httpExchange.getRequestMethod();
         System.out.println(method);
         Integer id = getIdFromPath(httpExchange.getRequestURI().getPath());
@@ -55,31 +56,40 @@ public class HttpEpics extends BaseHttpHandler {
             try {
                 taskManager.updateEpic(new Epic(id, name, status, description));
                 System.out.println("Действие try 1 выполнено");
-                response = HttpTaskServer.getJson().toJson(taskManager.getEpicById(id));
+                //response = HttpTaskServer.getJson().toJson(taskManager.getEpicById(id));
                 sendText(httpExchange, response, 201);
                 System.out.println("Действие try выполнено");
             } catch (NotFoundException e) {
                 taskManager.createEpic(new Epic(name, status, description, startTime, Duration.ofMinutes(duration)));
                 System.out.println("Выполнено 1");
                 //System.out.println(taskManager.getTaskById(id));
-                response = HttpTaskServer.getJson().toJson(taskManager.getEpicById(id));
+                // response = HttpTaskServer.getJson().toJson(taskManager.getEpicById(id));
                 System.out.println("Выполнено 2");
-                sendText(httpExchange, response, 201);
+                sendText(httpExchange, "Эпик добавлен", 201);
                 System.out.println("Действие catch выполнено");
+            } catch (ValidationException e) {
+                response = sendHasInteractions("Эпик");
+                sendText(httpExchange, response, 406);
 
             }
         } else if ((method.equals("GET"))) {
-            if (id == null) {
-                response = HttpTaskServer.getJson().toJson(taskManager.getEpics());
-                sendText(httpExchange, response, 200);
-            }
-            if ((id != null) & (subtasksTrue == false)) {
-                response = HttpTaskServer.getJson().toJson(taskManager.getEpicById(id));
-                sendText(httpExchange, response, 200);
-            }
-            if ((id != null) & (subtasksTrue == true)) {
-                response = HttpTaskServer.getJson().toJson(taskManager.getEpicById(id));
-                sendText(httpExchange, response, 200);
+            try {
+
+                if (id == null) {
+                    response = HttpTaskServer.getJson().toJson(taskManager.getEpics());
+                    sendText(httpExchange, response, 200);
+                }
+                if ((id != null) & (subtasksTrue == false)) {
+                    response = HttpTaskServer.getJson().toJson(taskManager.getEpicById(id));
+                    sendText(httpExchange, response, 200);
+                }
+                if ((id != null) & (subtasksTrue == true)) {
+                    response = HttpTaskServer.getJson().toJson(taskManager.getEpicSubtasks(id));
+                    sendText(httpExchange, response, 200);
+                }
+            } catch (NotFoundException e) {
+                response = sendNotFound("Эпик");
+                sendText(httpExchange, response, 404);
             }
 
         } else if (method.equals("DELETE")) {

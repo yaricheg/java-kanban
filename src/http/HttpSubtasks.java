@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.sun.net.httpserver.HttpExchange;
 import exception.NotFoundException;
+import exception.ValidationException;
 import model.Status;
 import model.SubTask;
 import service.TaskManager;
@@ -24,7 +25,7 @@ public class HttpSubtasks extends BaseHttpHandler {
 
     @Override
     public void handle(HttpExchange httpExchange) throws IOException {
-        String response;
+        String response = null;
         String method = httpExchange.getRequestMethod();
         System.out.println(method);
         Integer id = getIdFromPath(httpExchange.getRequestURI().getPath());
@@ -51,28 +52,37 @@ public class HttpSubtasks extends BaseHttpHandler {
             int idEpic = jsonObject.get("idEpic").getAsInt();
             System.out.println("После десериализации:" + name + " " + status + " " + description + " "
                     + startTime + " " + Duration.ofMinutes(duration));
-            SubTask subTask;
             try {
                 taskManager.updateSubTask(new SubTask(name, status, description, idEpic,
                         startTime, Duration.ofMinutes(duration)));
                 System.out.println("Действие выполнено");
-                response = HttpTaskServer.getJson().toJson(taskManager.getSubTaskById(id));
-                sendText(httpExchange, response, 201);
+                //response = HttpTaskServer.getJson().toJson(taskManager.getSubTaskById(id));
+                sendText(httpExchange, "Подзадача добавлена", 201);
                 System.out.println("Действие try выполнено");
             } catch (NotFoundException e) {
-                subTask = taskManager.createSubTask(new SubTask(name, status, description, idEpic,
+                taskManager.createSubTask(new SubTask(name, status, description, idEpic,
                         startTime, Duration.ofMinutes(duration)));
                 System.out.println("Выполнено 1");
-                response = HttpTaskServer.getJson().toJson(taskManager.getSubTaskById(subTask.getId()));
+                //response = HttpTaskServer.getJson().toJson(taskManager.getSubTaskById(subTask.getId()));
                 System.out.println("Выполнено 2");
-                sendText(httpExchange, response, 201);
+                sendText(httpExchange, "Подзадача добавлена", 201);
                 System.out.println("Действие catch выполнено");
+            } catch (ValidationException e) {
+                response = sendHasInteractions("Подзадача");
+                sendText(httpExchange, response, 406);
+
             }
         } else if (method.equals("GET")) {
             if (id == null) {
                 response = HttpTaskServer.getJson().toJson(taskManager.getSubTasks());
             } else {
-                response = HttpTaskServer.getJson().toJson(taskManager.getSubTaskById(id));
+                try {
+                    response = HttpTaskServer.getJson().toJson(taskManager.getSubTaskById(id));
+                    sendText(httpExchange, response, 200);
+                } catch (NotFoundException e) {
+                    response = sendNotFound("Подзадача");
+                    sendText(httpExchange, response, 404);
+                }
             }
             sendText(httpExchange, response, 200);
         } else if (method.equals("DELETE")) {
