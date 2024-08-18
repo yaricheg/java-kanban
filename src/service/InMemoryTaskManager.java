@@ -70,24 +70,24 @@ public class InMemoryTaskManager implements TaskManager {
 
     //a
     @Override
-    public List<Task> getAllTasks() {
+    public List<Task> getTasks() {
         return tasks.values().stream().toList();
     }
 
 
     @Override
-    public List<Epic> getAllEpics() {
+    public List<Epic> getEpics() {
         return epics.values().stream().toList();
 
     }
 
     @Override
-    public List<SubTask> getAllSubTasks() {
+    public List<SubTask> getSubTasks() {
         return subtasks.values().stream().toList();
     }
 
     @Override
-    public List<SubTask> getSubTasksOfEpic(Epic epic) {
+    public List<SubTask> getEpicSubtasks(Epic epic) {
         List<SubTask> subtasksList = epic.getSubTasks()
                 .stream()
                 .map(id -> subtasks.get(id))
@@ -99,7 +99,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     //b
     @Override
-    public void deleteAllTasks() {
+    public void deleteTasks() {
         tasks.keySet().stream()
                 .forEach(id -> {
                     historyManager.removeFromHistory(id);
@@ -109,7 +109,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void deleteAllEpics() {
+    public void deleteEpics() {
         subtasks.keySet().stream()
                 .forEach(id -> {
                     historyManager.removeFromHistory(id);
@@ -122,7 +122,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void deleteAllSubTasks() {
+    public void deleteSubTasks() {
         subtasks.keySet().stream()
                 .forEach(id -> {
                     historyManager.removeFromHistory(id);
@@ -141,7 +141,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     // c
     @Override
-    public Task getTask(int id) {
+    public Task getTaskById(Integer id) {
         Task task = tasks.get(id);
         if (task == null) {
             throw new NotFoundException("Задача с ид " + id + " не найдена");
@@ -151,14 +151,14 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public Epic getEpic(int id) {
+    public Epic getEpicById(Integer id) {
         Epic epic = epics.get(id);
         historyManager.add(epic);
         return epic;
     }
 
     @Override
-    public SubTask getSubTask(int id) {
+    public SubTask getSubTaskById(Integer id) {
         SubTask subTask = subtasks.get(id);
         historyManager.add(subTask);
         return subTask;
@@ -168,7 +168,9 @@ public class InMemoryTaskManager implements TaskManager {
     // d
     @Override
     public Task createTask(Task task) {
-        task.setId(generateId());
+        if (task.getId() == 0) {
+            task.setId(generateId());
+        }
         checkTaskTime(task);
         addPrioritizedTasks(task); // добавил
         tasks.put(task.getId(), task);
@@ -177,7 +179,10 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public Epic createEpic(Epic epic) {
-        epic.setId(generateId());
+        if (epic.getId() == 0) {
+            epic.setId(generateId());
+        }
+        //epic.setId(generateId());
         epics.put(epic.getId(), epic);
         return epic;
     }
@@ -185,7 +190,9 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public SubTask createSubTask(SubTask subtask) {
-        subtask.setId(generateId());
+        if (subtask.getId() == 0) {
+            subtask.setId(generateId());
+        }
         checkTaskTime(subtask);
         addPrioritizedTasks(subtask);// добавил
         subtasks.put(subtask.getId(), subtask);
@@ -213,7 +220,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void updateEpic(Epic epic) {
+    public void updateEpic(Epic epic) throws NotFoundException {
         Epic saved = epics.get(epic.getId());
         if (saved == null) {
             throw new NotFoundException("Эпик не найден ");
@@ -225,8 +232,11 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void updateSubTask(SubTask subtask) { // принимать только subTask
+    public void updateSubTask(SubTask subtask) throws NotFoundException { // принимать только subTask
         SubTask saved = subtasks.get(subtask.getId());
+        if (saved == null) {
+            throw new NotFoundException("Подзадача не найдена ");
+        }
         checkTaskTime(subtask);
         prioritizedTasks.remove(saved);
         prioritizedTasks.add(subtask);
@@ -243,14 +253,14 @@ public class InMemoryTaskManager implements TaskManager {
 
     //f
     @Override
-    public void deleteTask(int id) {
+    public void deleteTask(Integer id) {
         historyManager.removeFromHistory(id);
         prioritizedTasks.remove(tasks.get(id));
         tasks.remove(id);
     }
 
     @Override
-    public void deleteEpic(int id) { // должны удалиться и подзадачи
+    public void deleteEpic(Integer id) { // должны удалиться и подзадачи
         epics.get(id).getSubTasks().stream()
                 .forEach(idSubtask -> {
                     prioritizedTasks.remove(subtasks.get(idSubtask));
@@ -262,7 +272,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void deleteSubTask(int id) {
+    public void deleteSubTask(Integer id) {
         SubTask subtask = subtasks.get(id);
         Epic epic = epics.get(subtask.getEpic());
         epic.removeSubTask(id);

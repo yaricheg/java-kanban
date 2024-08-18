@@ -1,4 +1,4 @@
-import model.Epic;
+/*import model.Epic;
 import model.SubTask;
 import model.Task;
 import service.FileBackedTaskManager;
@@ -51,26 +51,27 @@ public class Main {
                 LocalDateTime.of(2024, 6, 26, 16, 0), Duration.ofMinutes(120)));
 
 
-        System.out.println(taskManager.getAllTasks());
-        System.out.println(taskManager.getAllEpics());
-        System.out.println(taskManager.getAllSubTasks());
+        System.out.println(taskManager.getTasks());
+        System.out.println(taskManager.getEpics());
+        System.out.println(taskManager.getSubTasks());
         System.out.println();
 
         taskManager.updateEpic(new Epic(6, "Поездка в Узбекистан", NEW, "в Ташкент"));
-        System.out.println(taskManager.getAllTasks());
-        System.out.println(taskManager.getAllEpics());
-        System.out.println(taskManager.getAllSubTasks());
+        taskManager.updateTask(new Task(1, "Поездка в Монголию", NEW, "в Улан-Батор",LocalDateTime.of(2030, 6, 26, 10, 0), Duration.ofMinutes(120) ));
+        System.out.println(taskManager.getTasks());
+        System.out.println(taskManager.getEpics());
+        System.out.println(taskManager.getSubTasks());
         System.out.println();
 
 
-        taskManager.getTask(1);
-        taskManager.getTask(2);
-        taskManager.getEpic(3);
-        taskManager.getSubTask(4);
-        taskManager.getSubTask(5);
-        taskManager.getEpic(6);
-        taskManager.getSubTask(7);
-        taskManager.getTask(1);
+        taskManager.getTaskById(1);
+        taskManager.getTaskById(2);
+        taskManager.getEpicById(3);
+        taskManager.getSubTaskById(4);
+        taskManager.getSubTaskById(5);
+        taskManager.getEpicById(6);
+        taskManager.getSubTaskById(7);
+        taskManager.getTaskById(1);
 
         System.out.println(taskManager.getHistory());
         System.out.println();
@@ -80,13 +81,13 @@ public class Main {
         FileBackedTaskManager fileBackedTaskManager;
         fileBackedTaskManager = new FileBackedTaskManager(file).loadFromFile(file);
 
-        System.out.println(fileBackedTaskManager.getAllEpics());
-        System.out.println(fileBackedTaskManager.getAllTasks());
-        System.out.println(fileBackedTaskManager.getAllSubTasks());
+        System.out.println(fileBackedTaskManager.getEpics());
+        System.out.println(fileBackedTaskManager.getTasks());
+        System.out.println(fileBackedTaskManager.getSubTasks());
         System.out.println();
 
         System.out.println(taskManager.getPrioritizedTasks());
 
     }
-}
+}*/
 

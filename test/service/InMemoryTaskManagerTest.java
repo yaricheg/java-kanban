@@ -33,18 +33,18 @@ public class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager
     @DisplayName("Проверяется, что InMemoryTaskManager добавляет задачи разного типа и может найти их по id")
     @Test
     void shouldCreateTaskAndSearchId() {
-        assertEquals(task, taskManager.getTask(task.getId()));
-        assertEquals(epic, taskManager.getEpic(epic.getId()));
-        assertEquals(subTask, taskManager.getSubTask(subTask.getId()));
+        assertEquals(task, taskManager.getTaskById(task.getId()));
+        assertEquals(epic, taskManager.getEpicById(epic.getId()));
+        assertEquals(subTask, taskManager.getSubTaskById(subTask.getId()));
 
     }
 
     @DisplayName("Проверяется неизменность задачи (по всем полям) при добавлении задачи в менеджер")
     @Test
     void shouldBeTrueTasks() {
-        assertEquals(task, taskManager.getTask(task.getId()));
-        assertEquals(epic, taskManager.getEpic(epic.getId()));
-        assertEquals(subTask, taskManager.getSubTask(subTask.getId()));
+        assertEquals(task, taskManager.getTaskById(task.getId()));
+        assertEquals(epic, taskManager.getEpicById(epic.getId()));
+        assertEquals(subTask, taskManager.getSubTaskById(subTask.getId()));
 
     }
 
@@ -62,8 +62,8 @@ public class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager
     void shouldCheckTasksInHistoryManager() {
         taskManager.updateTask(new Task(task.getId(), "Старая задача", DONE, "Задача 1 выполнена",
                 LocalDateTime.of(2024, 7, 12, 12, 12), Duration.ofMinutes(30)));
-        taskManager.getTask(task.getId());
-        assertEquals(taskManager.getAllTasks(), taskManager.getHistory(), "Значения должны совпадать");
+        taskManager.getTaskById(task.getId());
+        assertEquals(taskManager.getTasks(), taskManager.getHistory(), "Значения должны совпадать");
 
     }
 
@@ -72,21 +72,21 @@ public class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager
     @Test
     void shouldBe0DeleteTaskFromManager() {
         taskManager.deleteTask(task.getId());
-        assertEquals(0, taskManager.getAllTasks().size());
+        assertEquals(0, taskManager.getTasks().size());
     }
 
     @DisplayName("Проверка удаления Эпика из менеджера")
     @Test
     void shouldBe0DeleteEpicFromManager() {
         taskManager.deleteEpic(epic.getId());
-        assertEquals(0, taskManager.getAllEpics().size());
+        assertEquals(0, taskManager.getEpics().size());
     }
 
     @DisplayName("Проверка удаления Подзадачи из менеджера")
     @Test
     void shouldBe0DeleteSubTaskFromManager() {
         taskManager.deleteSubTask(subTask.getId());
-        assertEquals(0, taskManager.getAllSubTasks().size());
+        assertEquals(0, taskManager.getSubTasks().size());
     }
 
     @DisplayName("Проверка обновления задачи в менеджере")
@@ -94,7 +94,7 @@ public class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager
     void shouldBeFalseUpdateTask() {
         taskManager.updateTask(new Task(task.getId(), "Старая задача", DONE, "Выполнена",
                 LocalDateTime.of(2024, 7, 12, 12, 12), Duration.ofMinutes(30)));
-        boolean check = task.equals(taskManager.getTask(task.getId()));
+        boolean check = task.equals(taskManager.getTaskById(task.getId()));
         assertFalse(check);
     }
 
@@ -106,7 +106,7 @@ public class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager
     @Test
     void shouldBeTrueUpdateEpic() {
         taskManager.updateEpic(new Epic(epic.getId(), "Старая задача", NEW, "Выполнена"));
-        boolean check = equalsEpic(taskManager.getEpic(epic.getId()));
+        boolean check = equalsEpic(taskManager.getEpicById(epic.getId()));
         assertTrue(check);
     }
 
@@ -160,7 +160,7 @@ public class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager
     @DisplayName("Проверка наличия эпика для подзадач")
     @Test
     void checkIdOfEpicForSubTask() {
-        assertEquals(taskManager.getSubTask(subTask.getId()).getEpic(), epic.getId());
+        assertEquals(taskManager.getSubTaskById(subTask.getId()).getEpic(), epic.getId());
     }
 
     @DisplayName("Проверка расчета статуса для эпика")

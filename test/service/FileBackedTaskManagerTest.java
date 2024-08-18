@@ -42,9 +42,9 @@ public class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskMan
         //File check = File.createTempFile("tex", ".txt");
         Path path = Paths.get("C:\\Users\\yaroslav\\check1.txt");
         File check = path.toFile();
-        taskManager.deleteAllTasks();
-        taskManager.deleteAllEpics();
-        taskManager.deleteAllSubTasks();
+        taskManager.deleteTasks();
+        taskManager.deleteEpics();
+        taskManager.deleteSubTasks();
         taskManager = new FileBackedTaskManager(check);
         task = taskManager.createTask(new Task("Новая задача", NEW, "Задача 1",
                 LocalDateTime.of(2024, 7, 12, 12, 12), Duration.ofMinutes(30)));

@@ -7,27 +7,27 @@ import model.Task;
 import java.util.List;
 
 public interface TaskManager {
-    List<Task> getAllTasks();
+    List<Task> getTasks();
 
-    List<Epic> getAllEpics();
+    List<Epic> getEpics();
 
-    List<SubTask> getAllSubTasks();
+    List<SubTask> getSubTasks();
 
-    List<SubTask> getSubTasksOfEpic(Epic epic);
+    List<SubTask> getEpicSubtasks(Epic epic);
 
     List<Task> getPrioritizedTasks();
 
-    void deleteAllTasks();
+    void deleteTasks();
 
-    void deleteAllEpics();
+    void deleteEpics();
 
-    void deleteAllSubTasks();
+    void deleteSubTasks();
 
-    Task getTask(int id);
+    Task getTaskById(Integer id);
 
-    Epic getEpic(int id);
+    Epic getEpicById(Integer id);
 
-    SubTask getSubTask(int id);
+    SubTask getSubTaskById(Integer id);
 
     Task createTask(Task task);
 
@@ -41,11 +41,11 @@ public interface TaskManager {
 
     void updateSubTask(SubTask subtask);
 
-    void deleteTask(int id);
+    void deleteTask(Integer id);
 
-    void deleteEpic(int id);
+    void deleteEpic(Integer id);
 
-    void deleteSubTask(int id);
+    void deleteSubTask(Integer id);
 
     List<Task> getHistory();
 

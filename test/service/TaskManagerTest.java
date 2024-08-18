@@ -33,23 +33,23 @@ abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void getAllTasks() {
-        assertEquals(taskManager.getAllTasks().size(), 1);
+        assertEquals(taskManager.getTasks().size(), 1);
 
     }
 
     @Test
     void getAllEpics() {
-        assertEquals(taskManager.getAllEpics().size(), 1);
+        assertEquals(taskManager.getEpics().size(), 1);
     }
 
     @Test
     void getAllSubTasks() {
-        assertEquals(taskManager.getAllSubTasks().size(), 1);
+        assertEquals(taskManager.getSubTasks().size(), 1);
     }
 
     @Test
     void getSubTasksOfEpic() {
-        SubTask subTask1 = taskManager.getSubTasksOfEpic(epic).get(0);
+        SubTask subTask1 = taskManager.getEpicSubtasks(epic).get(0);
         assertTrue(subTask1.equals(subTask1));
     }
 
@@ -62,55 +62,55 @@ abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void deleteAllTasks() {
-        taskManager.deleteAllTasks();
-        assertEquals(taskManager.getAllTasks().size(), 0);
+        taskManager.deleteTasks();
+        assertEquals(taskManager.getTasks().size(), 0);
     }
 
     @Test
     void deleteAllEpics() {
-        taskManager.deleteAllEpics();
-        assertEquals(taskManager.getAllEpics().size(), 0);
-        assertEquals(taskManager.getAllSubTasks().size(), 0);
+        taskManager.deleteEpics();
+        assertEquals(taskManager.getEpics().size(), 0);
+        assertEquals(taskManager.getSubTasks().size(), 0);
     }
 
     @Test
     void deleteAllSubTasks() {
-        taskManager.deleteAllSubTasks();
-        assertEquals(taskManager.getAllEpics().size(), 1);
-        assertEquals(taskManager.getAllSubTasks().size(), 0);
+        taskManager.deleteSubTasks();
+        assertEquals(taskManager.getEpics().size(), 1);
+        assertEquals(taskManager.getSubTasks().size(), 0);
     }
 
     @Test
     void getTask() {
-        taskManager.getTask(task.getId());
+        taskManager.getTaskById(task.getId());
         assertEquals(taskManager.getHistory().get(0), task);
     }
 
     @Test
     void getEpic() {
-        taskManager.getEpic(epic.getId());
+        taskManager.getEpicById(epic.getId());
         assertEquals(taskManager.getHistory().get(0), epic);
     }
 
     @Test
     void getSubTask() {
-        taskManager.getSubTask(subTask.getId());
+        taskManager.getSubTaskById(subTask.getId());
         assertEquals(taskManager.getHistory().get(0), subTask);
     }
 
     @Test
     void createTask() {
-        assertEquals(taskManager.getAllTasks().size(), 1);
+        assertEquals(taskManager.getTasks().size(), 1);
     }
 
     @Test
     void createEpic() {
-        assertEquals(taskManager.getAllEpics().size(), 1);
+        assertEquals(taskManager.getEpics().size(), 1);
     }
 
     @Test
     void createSubTask() {
-        assertEquals(taskManager.getAllSubTasks().size(), 1);
+        assertEquals(taskManager.getSubTasks().size(), 1);
     }
 
     @Test
@@ -118,7 +118,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
         Task taskOld = task;
         taskManager.updateTask(new Task(task.getId(), "Cуперновая задача", NEW, "Задача 1",
                 LocalDateTime.of(2024, 7, 12, 12, 12), Duration.ofMinutes(30)));
-        assertFalse(taskManager.getAllTasks().get(0).equals(taskOld));
+        assertFalse(taskManager.getTasks().get(0).equals(taskOld));
 
     }
 
@@ -127,7 +127,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
         Epic newEpic = new Epic(epic.getId(), "Cуперновый эпик", NEW, "Суперэпик 1",
                 LocalDateTime.of(2024, 7, 12, 12, 12), Duration.ofMinutes(30));
         taskManager.updateEpic(newEpic);
-        assertTrue(taskManager.getAllEpics().get(0).equals(newEpic));
+        assertTrue(taskManager.getEpics().get(0).equals(newEpic));
 
     }
 
@@ -137,7 +137,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
                 "Суперописание", epic.getId(),
                 LocalDateTime.of(2025, 7, 12, 12, 12), Duration.ofMinutes(30));
         taskManager.updateSubTask(newSubTask);
-        assertTrue(taskManager.getSubTasksOfEpic(epic).get(0).equals(newSubTask));
+        assertTrue(taskManager.getEpicSubtasks(epic).get(0).equals(newSubTask));
 
 
     }
@@ -145,7 +145,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
     @Test
     void deleteTask() {
         taskManager.deleteTask(task.getId());
-        assertEquals(taskManager.getAllTasks().size(), 0);
+        assertEquals(taskManager.getTasks().size(), 0);
     }
 
     @Test
@@ -155,14 +155,14 @@ abstract class TaskManagerTest<T extends TaskManager> {
     @Test
     void deleteSubTask() {
         taskManager.deleteSubTask(subTask.getId());
-        assertEquals(taskManager.getAllSubTasks().size(), 0);
+        assertEquals(taskManager.getSubTasks().size(), 0);
     }
 
     @Test
     void getHistory() {
-        taskManager.getTask(task.getId());
-        taskManager.getEpic(epic.getId());
-        taskManager.getSubTask(subTask.getId());
+        taskManager.getTaskById(task.getId());
+        taskManager.getEpicById(epic.getId());
+        taskManager.getSubTaskById(subTask.getId());
         assertEquals(taskManager.getHistory().size(), 3);
     }
 

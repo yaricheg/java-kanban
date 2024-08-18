@@ -19,6 +19,7 @@ public class Task {
         this(id, name, status, description);
         this.startTime = startTime;
         this.duration = duration;
+        this.endTime = startTime.plus(duration);
 
     }
 
