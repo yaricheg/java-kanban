@@ -166,9 +166,7 @@ public class InMemoryTaskManager implements TaskManager {
     // d
     @Override
     public Task createTask(Task task) {
-        if (task.getId() == 0) {
-            task.setId(generateId());
-        }
+        task.setId(generateId());
         checkTaskTime(task);
         addPrioritizedTasks(task); // добавил
         tasks.put(task.getId(), task);
@@ -177,10 +175,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public Epic createEpic(Epic epic) {
-        if (epic.getId() == 0) {
-            epic.setId(generateId());
-        }
-        //epic.setId(generateId());
+        epic.setId(generateId());
         epics.put(epic.getId(), epic);
         return epic;
     }
@@ -188,9 +183,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public SubTask createSubTask(SubTask subtask) {
-        if (subtask.getId() == 0) {
-            subtask.setId(generateId());
-        }
+        subtask.setId(generateId());
         checkTaskTime(subtask);
         addPrioritizedTasks(subtask);// добавил
         subtasks.put(subtask.getId(), subtask);
