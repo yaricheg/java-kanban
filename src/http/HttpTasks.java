@@ -28,58 +28,36 @@ public class HttpTasks extends BaseHttpHandler {
 
     @Override
     public void handle(HttpExchange httpExchange) throws IOException {
-        String response = null;
+        String response;
         String method = httpExchange.getRequestMethod();
-        System.out.println(method);
         Integer id = getIdFromPath(httpExchange.getRequestURI().getPath());
-        System.out.println(id);
         if (method.equals("POST")) {
             InputStream inputStream = httpExchange.getRequestBody();
             String body = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
-            System.out.println("Тело запроса:\n" + body);
             JsonElement jsonElement = JsonParser.parseString(body);
             if (!jsonElement.isJsonObject()) { // проверяем, является ли элемент JSON-объектом
                 throw new NotFoundException("Неправильный формат Json");
             }
             JsonObject jsonObject = jsonElement.getAsJsonObject();
-            // Integer idJson = jsonObject.get("id").getAsInt();
             String name = jsonObject.get("name").getAsString();
-            System.out.println("Действие 1");
             Status status = Status.valueOf(jsonObject.get("status").getAsString());
-            System.out.println("Действие 2");
             String description = jsonObject.get("description").getAsString();
-            System.out.println("Действие 3");
             LocalDateTime startTime = LocalDateTime.parse(jsonObject.get("startTime").getAsString());
-            System.out.println("Действие 4");// localDateTime
             Integer duration = jsonObject.get("duration").getAsInt();
-            //LocalDateTime endTime = LocalDateTime.parse(jsonObject.get("endTime").getAsString());
-            System.out.println("После десериализации:" + name + " " + status + " " + description + " "
-                    + startTime + " " + Duration.ofMinutes(duration));
-
-
             try {
-                System.out.println("Выполнено try 1");
                 taskManager.updateTask(new Task(id, name, status, description,
                         startTime, Duration.ofMinutes(duration)));
-                System.out.println("Действие выполнено");
-                //response = HttpTaskServer.getJson().toJson(taskManager.getTaskById(id));
-                sendText(httpExchange, response, 201);
-                System.out.println("Действие try выполнено");
+                sendText(httpExchange, "Задача обновлена", 201);
             } catch (NotFoundException e) {
                 taskManager.createTask(new Task(name, status, description,
                         startTime, Duration.ofMinutes(duration)));
-                System.out.println("Выполнено 1");
-                //response = HttpTaskServer.getJson().toJson(taskManager.getTaskById(id));
-                //response = "Задача добавлена";
-                System.out.println("Выполнено 2");
                 sendText(httpExchange, "Задача добавлена", 201);
-                System.out.println("Действие catch выполнено");
             } catch (ValidationException e) {
                 response = sendHasInteractions("Задача");
                 sendText(httpExchange, response, 406);
-
+            } catch (IOException e) {
+                sendText(httpExchange, "Произошла ошибка при обработке запроса", 500);
             }
-
         } else if (method.equals("GET")) {
             if (id == null) {
                 List<Task> tasks = taskManager.getTasks();
@@ -90,11 +68,10 @@ public class HttpTasks extends BaseHttpHandler {
                     response = HttpTaskServer.getJson().toJson(taskManager.getTaskById(id));
                     sendText(httpExchange, response, 200);
                 } catch (NotFoundException e) {
-                    response = sendNotFound("Задача");
+                    response = sendNotFound("Задачи");
                     sendText(httpExchange, response, 404);
                 }
             }
-
         } else if (method.equals("DELETE")) {
             taskManager.deleteTask(id);
             response = HttpTaskServer.getJson().toJson(taskManager.getTasks());

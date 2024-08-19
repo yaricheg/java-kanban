@@ -49,8 +49,8 @@ abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void getSubTasksOfEpic() {
-        SubTask subTask1 = taskManager.getEpicSubtasks(epic).get(0);
-        assertTrue(subTask1.equals(subTask1));
+        SubTask subTask1 = taskManager.getEpicSubtasks(1).get(0);
+        assertTrue(subTask.equals(subTask1));
     }
 
     @Test
@@ -137,7 +137,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
                 "Суперописание", epic.getId(),
                 LocalDateTime.of(2025, 7, 12, 12, 12), Duration.ofMinutes(30));
         taskManager.updateSubTask(newSubTask);
-        assertTrue(taskManager.getEpicSubtasks(epic).get(0).equals(newSubTask));
+        assertTrue(taskManager.getEpicSubtasks(1).get(0).equals(newSubTask));
 
 
     }

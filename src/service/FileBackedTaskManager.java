@@ -44,7 +44,6 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         }
     }
 
-
     public FileBackedTaskManager loadFromFile(File file) {
         try (final BufferedReader reader = new BufferedReader(new FileReader(file, StandardCharsets.UTF_8))) {
             int maxId = 0;
@@ -78,7 +77,6 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             throw new ManagerIOException("Ошибка в файле: " + file.getAbsolutePath());
         }
     }
-
 
     @Override
     public Task createTask(Task task) {
