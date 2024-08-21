@@ -1,20 +1,14 @@
 package http;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
 import exception.NotFoundException;
 import exception.ValidationException;
-import model.Status;
 import model.SubTask;
 import service.TaskManager;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.time.Duration;
-import java.time.LocalDateTime;
 
 public class HttpSubtasks extends BaseHttpHandler {
     private final TaskManager taskManager;
@@ -25,57 +19,58 @@ public class HttpSubtasks extends BaseHttpHandler {
 
     @Override
     public void handle(HttpExchange httpExchange) throws IOException {
+        Gson gson = HttpTaskServer.getGson();
         String response;
         String method = httpExchange.getRequestMethod();
         Integer id = getIdFromPath(httpExchange.getRequestURI().getPath());
+        String json = new String(httpExchange.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
+        SubTask subTask = gson.fromJson(json, SubTask.class);
         if (method.equals("POST")) {
-            InputStream inputStream = httpExchange.getRequestBody();
-            String body = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
-            JsonElement jsonElement = JsonParser.parseString(body);
-            if (!jsonElement.isJsonObject()) {
-                throw new NotFoundException("Неправильный формат Json");
+            if (id != null) {
+                try {
+                    taskManager.updateSubTask(new SubTask(id, subTask.getName(), subTask.getStatus().toString(),
+                            subTask.getDescription(), subTask.getEpic(),
+                            subTask.getStartTime(), subTask.getDuration()));
+
+                    sendText(httpExchange, "Подзадача обновлена", 201);
+                } catch (NotFoundException e) {
+                    sendNotFound(httpExchange, "Подзадача не найдена");
+                } catch (ValidationException e) {
+                    sendHasInteractions(httpExchange, "Подзадача пересекается с другими задачами");
+                } catch (IOException e) {
+                    sendText(httpExchange, "Произошла ошибка при обработке запроса", 500);
+                }
             }
-            JsonObject jsonObject = jsonElement.getAsJsonObject();
-            String name = jsonObject.get("name").getAsString();
-            Status status = Status.valueOf(jsonObject.get("status").getAsString());
-            String description = jsonObject.get("description").getAsString();
-            LocalDateTime startTime = LocalDateTime.parse(jsonObject.get("startTime").getAsString());
-            Integer duration = jsonObject.get("duration").getAsInt();
-            int idEpic = jsonObject.get("idEpic").getAsInt();
-            try {
-                taskManager.updateSubTask(new SubTask(name, status, description, idEpic,
-                        startTime, Duration.ofMinutes(duration)));
-                sendText(httpExchange, "Подзадача добавлена", 201);
-            } catch (NotFoundException e) {
-                taskManager.createSubTask(new SubTask(name, status, description, idEpic,
-                        startTime, Duration.ofMinutes(duration)));
-                sendText(httpExchange, "Подзадача добавлена", 201);
-            } catch (ValidationException e) {
-                response = sendHasInteractions("Подзадача");
-                sendText(httpExchange, response, 406);
-            } catch (IOException e) {
-                sendText(httpExchange, "Произошла ошибка при обработке запроса", 500);
+            if (id == null) {
+                try {
+                    taskManager.createSubTask(new SubTask(subTask.getName(), subTask.getStatus().toString(),
+                            subTask.getDescription(), subTask.getEpic(),
+                            subTask.getStartTime(), subTask.getDuration()));
+                    sendText(httpExchange, "Подзадача добавлена", 201);
+                } catch (ValidationException e) {
+                    sendHasInteractions(httpExchange, "Подзадача пересекается с другими задачами");
+                }
             }
         } else if (method.equals("GET")) {
             if (id == null) {
-                response = HttpTaskServer.getJson().toJson(taskManager.getSubTasks());
-            } else {
+                response = HttpTaskServer.getGson().toJson(taskManager.getSubTasks());
+                sendText(httpExchange, response, 201);
+            }
+            if (!(id == null)) {
                 try {
-                    response = HttpTaskServer.getJson().toJson(taskManager.getSubTaskById(id));
+                    response = HttpTaskServer.getGson().toJson(taskManager.getSubTaskById(id));
                     sendText(httpExchange, response, 200);
                 } catch (NotFoundException e) {
-                    response = sendNotFound("Подзадачи");
-                    sendText(httpExchange, response, 404);
+                    sendNotFound(httpExchange, "Подзадача не найдена");
                 }
             }
-            sendText(httpExchange, response, 200);
         } else if (method.equals("DELETE")) {
-            taskManager.deleteTask(id);
-            response = HttpTaskServer.getJson().toJson(taskManager.getSubTasks());
+            taskManager.deleteSubTask(id);
+            response = "Подзадача удалена";
             sendText(httpExchange, response, 200);
         } else {
-            response = "Некорректный метод";
-            sendText(httpExchange, response, 200);
+            response = "METHOD_NOT_ALLOWED";
+            sendText(httpExchange, response, 409);
         }
     }
 }

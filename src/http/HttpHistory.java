@@ -17,9 +17,8 @@ public class HttpHistory extends BaseHttpHandler {
         String response;
         String method = httpExchange.getRequestMethod();
         if (method.equals("GET")) {
-            response = HttpTaskServer.getJson().toJson(taskManager.getHistory());
+            response = HttpTaskServer.getGson().toJson(taskManager.getHistory());
             sendText(httpExchange, response, 200);
-
         } else {
             response = "Некорректный метод";
             sendText(httpExchange, response, 200);

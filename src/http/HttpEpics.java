@@ -1,20 +1,14 @@
 package http;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
 import exception.NotFoundException;
 import exception.ValidationException;
 import model.Epic;
-import model.Status;
 import service.TaskManager;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.time.Duration;
-import java.time.LocalDateTime;
 
 public class HttpEpics extends BaseHttpHandler {
     private final TaskManager taskManager;
@@ -25,60 +19,59 @@ public class HttpEpics extends BaseHttpHandler {
 
     @Override
     public void handle(HttpExchange httpExchange) throws IOException {
+        Gson gson = HttpTaskServer.getGson();
         String response;
         String method = httpExchange.getRequestMethod();
         Integer id = getIdFromPath(httpExchange.getRequestURI().getPath());
         Boolean subtasksTrue = getSubTasksFromPath(httpExchange.getRequestURI().getPath());
+        String json = new String(httpExchange.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
+        Epic epic = gson.fromJson(json, Epic.class);
         if (method.equals("POST")) {
-            InputStream inputStream = httpExchange.getRequestBody();
-            String body = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
-            JsonElement jsonElement = JsonParser.parseString(body);
-            if (!jsonElement.isJsonObject()) { // проверяем, является ли элемент JSON-объектом
-                throw new NotFoundException("Неправильный формат Json");
+            if (id != null) {
+                try {
+                    taskManager.updateEpic(new Epic(id, epic.getName(),
+                            epic.getStatus().toString(), epic.getDescription(),
+                            epic.getStartTime(), epic.getDuration()));
+                    sendText(httpExchange, "Эпик обновлен", 201);
+                } catch (NotFoundException e) {
+                    sendNotFound(httpExchange, "Эпик не найден");
+                } catch (ValidationException e) {
+                    sendHasInteractions(httpExchange, "Эпик пересекается с другими задачами");
+                } catch (IOException e) {
+                    sendText(httpExchange, "Произошла ошибка при обработке запроса", 500);
+                }
             }
-            JsonObject jsonObject = jsonElement.getAsJsonObject();
-            String name = jsonObject.get("name").getAsString();
-            Status status = Status.valueOf(jsonObject.get("status").getAsString());
-            String description = jsonObject.get("description").getAsString();
-            LocalDateTime startTime = LocalDateTime.parse(jsonObject.get("startTime").getAsString());
-            Integer duration = jsonObject.get("duration").getAsInt();
-            try {
-                taskManager.updateEpic(new Epic(id, name, status, description));
-                sendText(httpExchange, "Эпик обновлен", 201);
-            } catch (NotFoundException e) {
-                taskManager.createEpic(new Epic(name, status, description, startTime, Duration.ofMinutes(duration)));
+            if (id == null) {
+                taskManager.createEpic(new Epic(epic.getName(),
+                        epic.getStatus().toString(), epic.getDescription(),
+                        epic.getStartTime(), epic.getDuration()));
                 sendText(httpExchange, "Эпик добавлен", 201);
-            } catch (ValidationException e) {
-                response = sendHasInteractions("Эпик");
-                sendText(httpExchange, response, 406);
-            } catch (IOException e) {
-                sendText(httpExchange, "Произошла ошибка при обработке запроса", 500);
+
             }
-        } else if ((method.equals("GET"))) {
+        } else if (method.equals("GET")) {
             try {
                 if (id == null) {
-                    response = HttpTaskServer.getJson().toJson(taskManager.getEpics());
+                    response = HttpTaskServer.getGson().toJson(taskManager.getEpics());
                     sendText(httpExchange, response, 200);
                 }
                 if ((id != null) & (subtasksTrue == false)) {
-                    response = HttpTaskServer.getJson().toJson(taskManager.getEpicById(id));
+                    response = HttpTaskServer.getGson().toJson(taskManager.getEpicById(id));
                     sendText(httpExchange, response, 200);
                 }
                 if ((id != null) & (subtasksTrue == true)) {
-                    response = HttpTaskServer.getJson().toJson(taskManager.getEpicSubtasks(id));
+                    response = HttpTaskServer.getGson().toJson(taskManager.getEpicSubtasks(id));
                     sendText(httpExchange, response, 200);
                 }
             } catch (NotFoundException e) {
-                response = sendNotFound("Эпика");
-                sendText(httpExchange, response, 404);
+                sendNotFound(httpExchange, "Эпик не найден");
             }
         } else if (method.equals("DELETE")) {
             taskManager.deleteEpic(id);
-            response = HttpTaskServer.getJson().toJson(taskManager.getEpics());
+            response = "Эпик удален";
             sendText(httpExchange, response, 200);
         } else {
-            response = "Некорректный метод";
-            sendText(httpExchange, response, 200);
+            response = " METHOD_NOT_ALLOWED";
+            sendText(httpExchange, response, 409);
         }
     }
 

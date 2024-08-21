@@ -8,19 +8,19 @@ public class Epic extends Task {
     private ArrayList<Integer> subTasks = new ArrayList<>();
 
 
-    public Epic(String name, Status status, String description) {
-        super(name, Status.NEW, description);
+    public Epic(String name, String status, String description) {
+        super(name, "NEW", description);
     }
 
-    public Epic(int id, String name, Status status, String description) {
-        super(id, name, Status.NEW, description);
+    public Epic(int id, String name, String status, String description) {
+        super(id, name, "NEW", description);
     }
 
-    public Epic(String name, Status status, String description, LocalDateTime startTime, Duration duration) {
-        super(name, Status.NEW, description, startTime, duration);
+    public Epic(String name, String status, String description, LocalDateTime startTime, Duration duration) {
+        super(name, "NEW", description, startTime, duration);
     }
 
-    public Epic(int id, String name, Status status, String description, LocalDateTime startTime, Duration duration) {
+    public Epic(int id, String name, String status, String description, LocalDateTime startTime, Duration duration) {
         super(id, name, status, description, startTime, duration);
     }
 

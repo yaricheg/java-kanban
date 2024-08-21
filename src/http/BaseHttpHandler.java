@@ -16,13 +16,19 @@ public abstract class BaseHttpHandler implements HttpHandler {
         h.close();
     }
 
-    protected String sendNotFound(String text) {
-        return "Код состояния: 404 " + ". " + text + " нет.";
-
+    protected void sendNotFound(HttpExchange h, String text) throws IOException {
+        byte[] resp = text.getBytes(StandardCharsets.UTF_8);
+        h.sendResponseHeaders(404, resp.length);
+        h.getResponseBody().write(resp);
+        h.close();
     }
 
-    protected String sendHasInteractions(String text) {
-        return "Код состояния: 406 " + ". " + text + " пересекается с другой задачей/подзадачей";
+    protected void sendHasInteractions(HttpExchange h, String text) throws IOException {
+        byte[] resp = text.getBytes(StandardCharsets.UTF_8);
+        h.sendResponseHeaders(406, resp.length);
+        h.getResponseBody().write(resp);
+        h.close();
+
     }
 
     protected Integer getIdFromPath(String path) {
@@ -32,6 +38,4 @@ public abstract class BaseHttpHandler implements HttpHandler {
         }
         return null;
     }
-
-
 }

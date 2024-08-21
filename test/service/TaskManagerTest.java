@@ -12,7 +12,6 @@ import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDateTime;
 
-import static model.Status.NEW;
 import static org.junit.jupiter.api.Assertions.*;
 
 abstract class TaskManagerTest<T extends TaskManager> {
@@ -23,11 +22,11 @@ abstract class TaskManagerTest<T extends TaskManager> {
 
     @BeforeEach
     void init() throws IOException {
-        task = taskManager.createTask(new Task("Новая задача", NEW, "Задача 1",
+        task = taskManager.createTask(new Task("Новая задача", "NEW", "Задача 1",
                 LocalDateTime.of(2024, 7, 12, 12, 12), Duration.ofMinutes(30)));
-        epic = taskManager.createEpic(new Epic(6, "Новый Эпик", NEW, "Задача 1",
+        epic = taskManager.createEpic(new Epic(6, "Новый Эпик", "NEW", "Задача 1",
                 LocalDateTime.of(2027, 7, 12, 12, 12), Duration.ofMinutes(30)));
-        subTask = taskManager.createSubTask(new SubTask("Новая подзадача", NEW, "подзадача 1", epic.getId(),
+        subTask = taskManager.createSubTask(new SubTask("Новая подзадача", "NEW", "подзадача 1", epic.getId(),
                 LocalDateTime.of(2024, 6, 12, 12, 12), Duration.ofMinutes(30)));
     }
 
@@ -116,7 +115,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
     @Test
     void updateTask() {
         Task taskOld = task;
-        taskManager.updateTask(new Task(task.getId(), "Cуперновая задача", NEW, "Задача 1",
+        taskManager.updateTask(new Task(task.getId(), "Cуперновая задача", "NEW", "Задача 1",
                 LocalDateTime.of(2024, 7, 12, 12, 12), Duration.ofMinutes(30)));
         assertFalse(taskManager.getTasks().get(0).equals(taskOld));
 
@@ -124,7 +123,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void updateEpic() {
-        Epic newEpic = new Epic(epic.getId(), "Cуперновый эпик", NEW, "Суперэпик 1",
+        Epic newEpic = new Epic(epic.getId(), "Cуперновый эпик", "NEW", "Суперэпик 1",
                 LocalDateTime.of(2024, 7, 12, 12, 12), Duration.ofMinutes(30));
         taskManager.updateEpic(newEpic);
         assertTrue(taskManager.getEpics().get(0).equals(newEpic));
@@ -133,7 +132,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     void updateSubTask() {
-        SubTask newSubTask = new SubTask(subTask.getId(), "Суперновая подзадача", NEW,
+        SubTask newSubTask = new SubTask(subTask.getId(), "Суперновая подзадача", "NEW",
                 "Суперописание", epic.getId(),
                 LocalDateTime.of(2025, 7, 12, 12, 12), Duration.ofMinutes(30));
         taskManager.updateSubTask(newSubTask);
@@ -171,7 +170,7 @@ abstract class TaskManagerTest<T extends TaskManager> {
     @Test
     void testValidationException() {
         ValidationException thrown = assertThrows(ValidationException.class, () -> {
-            taskManager.createTask(new Task("Новая задача", NEW, "Задача 1",
+            taskManager.createTask(new Task("Новая задача", "NEW", "Задача 1",
                     LocalDateTime.of(2024, 7, 12, 12, 15), Duration.ofMinutes(30)));
         }, "Пересечение с задачей " + task.getId());
         assertEquals("Пересечение с задачей " + task.getId(), thrown.getMessage());

@@ -151,6 +151,9 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public Epic getEpicById(Integer id) {
         Epic epic = epics.get(id);
+        if (epic == null) {
+            throw new NotFoundException("Эпик с ид " + id + " не найден");
+        }
         historyManager.add(epic);
         return epic;
     }
@@ -158,6 +161,9 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public SubTask getSubTaskById(Integer id) {
         SubTask subTask = subtasks.get(id);
+        if (subTask == null) {
+            throw new NotFoundException("Подзадача с ид " + id + " не найдена");
+        }
         historyManager.add(subTask);
         return subTask;
     }
@@ -183,11 +189,14 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public SubTask createSubTask(SubTask subtask) {
+        Epic epic = epics.get(subtask.getEpic());
+        if (epic == null) {
+            throw new NotFoundException("Неверно указан id эпика");
+        }
         subtask.setId(generateId());
         checkTaskTime(subtask);
         addPrioritizedTasks(subtask);// добавил
         subtasks.put(subtask.getId(), subtask);
-        Epic epic = epics.get(subtask.getEpic());
         epic.addSubTask(subtask.getId());
         getTimeEpic(epic);
         calculateStatus(epic);

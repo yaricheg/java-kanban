@@ -17,7 +17,7 @@ public class HttpPrioritized extends BaseHttpHandler {
         String response;
         String method = httpExchange.getRequestMethod();
         if (method.equals("GET")) {
-            response = HttpTaskServer.getJson().toJson(taskManager.getPrioritizedTasks());
+            response = HttpTaskServer.getGson().toJson(taskManager.getPrioritizedTasks());
             sendText(httpExchange, response, 200);
         } else {
             response = "Некорректный метод";

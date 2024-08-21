@@ -7,7 +7,6 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static model.Status.NEW;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class InMemoryHistoryManagerTest {
@@ -22,11 +21,11 @@ class InMemoryHistoryManagerTest {
 
     @Test
     void testRemoveFirst() {
-        Task task1 = new Task(1, "Сходить в кино", NEW, "С друзьями в пн");
+        Task task1 = new Task(1, "Сходить в кино", "NEW", "С друзьями в пн");
         historyManager.add(task1);
-        Task task2 = new Task(2, "Сходить в кино", NEW, "С друзьями в вт");
+        Task task2 = new Task(2, "Сходить в кино", "NEW", "С друзьями в вт");
         historyManager.add(task2);
-        Task task3 = new Task(3, "Сходить в кино", NEW, "С друзьями в ср");
+        Task task3 = new Task(3, "Сходить в кино", "NEW", "С друзьями в ср");
         historyManager.add(task3);
         historyManager.removeFromHistory(1);
         assertEquals(historyManager.getHistory(), List.of(task2, task3));
@@ -34,11 +33,11 @@ class InMemoryHistoryManagerTest {
 
     @Test
     void testRemoveSecond() {
-        Task task1 = new Task(1, "Сходить в кино", NEW, "С друзьями в пн");
+        Task task1 = new Task(1, "Сходить в кино", "NEW", "С друзьями в пн");
         historyManager.add(task1);
-        Task task2 = new Task(2, "Сходить в кино", NEW, "С друзьями в вт");
+        Task task2 = new Task(2, "Сходить в кино", "NEW", "С друзьями в вт");
         historyManager.add(task2);
-        Task task3 = new Task(3, "Сходить в кино", NEW, "С друзьями в ср");
+        Task task3 = new Task(3, "Сходить в кино", "NEW", "С друзьями в ср");
         historyManager.add(task3);
         historyManager.removeFromHistory(2);
         assertEquals(historyManager.getHistory(), List.of(task1, task3));
@@ -46,11 +45,11 @@ class InMemoryHistoryManagerTest {
 
     @Test
     void testRemoveLast() {
-        Task task1 = new Task(1, "Сходить в кино", NEW, "С друзьями в пн");
+        Task task1 = new Task(1, "Сходить в кино", "NEW", "С друзьями в пн");
         historyManager.add(task1);
-        Task task2 = new Task(2, "Сходить в кино", NEW, "С друзьями в вт");
+        Task task2 = new Task(2, "Сходить в кино", "NEW", "С друзьями в вт");
         historyManager.add(task2);
-        Task task3 = new Task(3, "Сходить в кино", NEW, "С друзьями в ср");
+        Task task3 = new Task(3, "Сходить в кино", "NEW", "С друзьями в ср");
         historyManager.add(task3);
         historyManager.removeFromHistory(3);
         assertEquals(historyManager.getHistory(), List.of(task1, task2));
@@ -60,11 +59,11 @@ class InMemoryHistoryManagerTest {
     @DisplayName("Дублирование")
     @Test
     void testDuplication() {
-        Task task1 = new Task(1, "Сходить в кино", NEW, "С друзьями в пн");
+        Task task1 = new Task(1, "Сходить в кино", "NEW", "С друзьями в пн");
         historyManager.add(task1);
-        Task task2 = new Task(2, "Сходить в кино", NEW, "С друзьями в вт");
+        Task task2 = new Task(2, "Сходить в кино", "NEW", "С друзьями в вт");
         historyManager.add(task2);
-        Task task3 = new Task(3, "Сходить в кино", NEW, "С друзьями в ср");
+        Task task3 = new Task(3, "Сходить в кино", "NEW", "С друзьями в ср");
         historyManager.add(task3);
         historyManager.add(task1); // дублируем добавление 1 задачи
         assertEquals(historyManager.getHistory(), List.of(task2, task3, task1));

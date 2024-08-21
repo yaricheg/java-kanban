@@ -10,13 +10,13 @@ import java.time.Duration;
 public class DurationAdapter extends TypeAdapter<Duration> {
     @Override
     public void write(JsonWriter out, Duration value) throws IOException {
-        String time = value.toString();
+        long time = value.toMinutes();
         out.value(time);
     }
 
     @Override
     public Duration read(JsonReader in) throws IOException {
-        String time = in.nextString();
-        return Duration.parse(time);
+        long time = in.nextLong();
+        return Duration.ofMinutes(time);
     }
 }

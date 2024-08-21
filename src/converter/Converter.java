@@ -1,7 +1,6 @@
 package converter;
 
 import model.Epic;
-import model.Status;
 import model.SubTask;
 import model.Task;
 
@@ -12,7 +11,7 @@ public class Converter {
     public static Task fromString(String value) {
         String[] valueSplit = value.split(",");
         int id = Integer.parseInt(valueSplit[0]);
-        Status status = Status.valueOf(valueSplit[3]);
+        String status = valueSplit[3];
         LocalDateTime startDateTime = LocalDateTime.parse(valueSplit[6]);
         Duration duration = Duration.ofMinutes(Integer.parseInt(valueSplit[7]));
         if (valueSplit[1].equals("TASK")) {

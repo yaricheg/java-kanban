@@ -10,8 +10,8 @@ public class TaskTest {
     @Test
     @DisplayName("Проверка, что Task равны друг другу, если равен их id")
     void shouldEqualsWithCopy() {
-        Task task = new Task("name", Status.NEW, "desc");
-        Task taskExpected = new Task("name", Status.NEW, "desc");
+        Task task = new Task("name", "NEW", "desc");
+        Task taskExpected = new Task("name", "NEW", "desc");
         assertEqualsTask(taskExpected, task, "Задачи должны совпадать");
     }
 

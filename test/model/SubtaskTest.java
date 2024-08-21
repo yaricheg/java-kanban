@@ -12,9 +12,9 @@ public class SubtaskTest {
     @Test
     @DisplayName("Проверка, что SubTask равны друг другу, если равен их id")
     void shouldEqualsWithCopy() {
-        SubTask subTask = new SubTask("name", Status.NEW, "desc", 1,
+        SubTask subTask = new SubTask("name", "NEW", "desc", 1,
                 LocalDateTime.of(2024, 6, 12, 12, 12), Duration.ofMinutes(30));
-        SubTask subTaskExpected = new SubTask("name", Status.NEW, "desc", 1, LocalDateTime.of(2024, 6, 12, 12, 12), Duration.ofMinutes(30));
+        SubTask subTaskExpected = new SubTask("name", "NEW", "desc", 1, LocalDateTime.of(2024, 6, 12, 12, 12), Duration.ofMinutes(30));
         assertEqualsTask(subTaskExpected, subTask, "Задачи должны совпадать");
     }
 

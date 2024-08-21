@@ -1,22 +1,14 @@
 package http;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.sun.net.httpserver.HttpExchange;
 import exception.NotFoundException;
 import exception.ValidationException;
-import model.Status;
 import model.Task;
 import service.TaskManager;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.time.Duration;
-import java.time.LocalDateTime;
 import java.util.List;
-
 
 public class HttpTasks extends BaseHttpHandler {
 
@@ -32,53 +24,52 @@ public class HttpTasks extends BaseHttpHandler {
         String method = httpExchange.getRequestMethod();
         Integer id = getIdFromPath(httpExchange.getRequestURI().getPath());
         if (method.equals("POST")) {
-            InputStream inputStream = httpExchange.getRequestBody();
-            String body = new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
-            JsonElement jsonElement = JsonParser.parseString(body);
-            if (!jsonElement.isJsonObject()) { // проверяем, является ли элемент JSON-объектом
-                throw new NotFoundException("Неправильный формат Json");
+            String json = new String(httpExchange.getRequestBody().readAllBytes(), StandardCharsets.UTF_8);
+            Task task = HttpTaskServer.getGson().fromJson(json, Task.class);
+            if (id != null) {
+                try {
+                    taskManager.updateTask(new Task(id, task.getName(), task.getStatus().toString(),
+                            task.getDescription(), task.getStartTime(), task.getDuration()));
+                    sendText(httpExchange, "Задача обновлена", 201);
+                } catch (ValidationException e) {
+                    sendHasInteractions(httpExchange, "Задача пересекается с другими задачами");
+                } catch (NotFoundException e) {
+                    sendNotFound(httpExchange, "Задача не найдена");
+                } catch (IOException e) {
+                    sendText(httpExchange, "Произошла ошибка при обработке запроса", 500);
+                }
             }
-            JsonObject jsonObject = jsonElement.getAsJsonObject();
-            String name = jsonObject.get("name").getAsString();
-            Status status = Status.valueOf(jsonObject.get("status").getAsString());
-            String description = jsonObject.get("description").getAsString();
-            LocalDateTime startTime = LocalDateTime.parse(jsonObject.get("startTime").getAsString());
-            Integer duration = jsonObject.get("duration").getAsInt();
-            try {
-                taskManager.updateTask(new Task(id, name, status, description,
-                        startTime, Duration.ofMinutes(duration)));
-                sendText(httpExchange, "Задача обновлена", 201);
-            } catch (NotFoundException e) {
-                taskManager.createTask(new Task(name, status, description,
-                        startTime, Duration.ofMinutes(duration)));
-                sendText(httpExchange, "Задача добавлена", 201);
-            } catch (ValidationException e) {
-                response = sendHasInteractions("Задача");
-                sendText(httpExchange, response, 406);
-            } catch (IOException e) {
-                sendText(httpExchange, "Произошла ошибка при обработке запроса", 500);
+            if (id == null) {
+                try {
+                    taskManager.createTask(new Task(task.getName(), task.getStatus().toString(),
+                            task.getDescription(), task.getStartTime(), task.getDuration()));
+                    sendText(httpExchange, "Задача добавлена", 201);
+                } catch (ValidationException e) {
+                    sendHasInteractions(httpExchange, "Задача пересекается с другими задачами");
+                }
             }
+
         } else if (method.equals("GET")) {
             if (id == null) {
                 List<Task> tasks = taskManager.getTasks();
-                response = HttpTaskServer.getJson().toJson(tasks);
+                response = HttpTaskServer.getGson().toJson(tasks);
                 sendText(httpExchange, response, 200);
-            } else {
+            }
+            if (!(id == null)) {
                 try {
-                    response = HttpTaskServer.getJson().toJson(taskManager.getTaskById(id));
+                    response = HttpTaskServer.getGson().toJson(taskManager.getTaskById(id));
                     sendText(httpExchange, response, 200);
                 } catch (NotFoundException e) {
-                    response = sendNotFound("Задачи");
-                    sendText(httpExchange, response, 404);
+                    sendNotFound(httpExchange, "Задача не найдена");
                 }
             }
         } else if (method.equals("DELETE")) {
             taskManager.deleteTask(id);
-            response = HttpTaskServer.getJson().toJson(taskManager.getTasks());
+            response = "Задача удалена";
             sendText(httpExchange, response, 200);
         } else {
-            response = "Некорректный метод";
-            sendText(httpExchange, response, 200);
+            response = "METHOD_NOT_ALLOWED";
+            sendText(httpExchange, response, 409);
         }
     }
 }
