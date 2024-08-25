@@ -1,5 +1,7 @@
 package model;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class Task {
@@ -8,16 +10,35 @@ public class Task {
     private Status status;
     private String description;
 
-    public Task(int id, String name, Status status, String description) {
-        this.id = id;
-        this.name = name;
-        this.status = status;
-        this.description = description;
+    private LocalDateTime startTime;  // localDateTime
+    private Duration duration; // минуты или Duration
+    private LocalDateTime endTime;
+
+
+    public Task(int id, String name, String status, String description, LocalDateTime startTime, Duration duration) {
+        this(id, name, status, description);
+        this.startTime = startTime;
+        this.duration = duration;
+        this.endTime = startTime.plus(duration);
+
     }
 
-    public Task(String name, Status status, String description) {
+    public Task(String name, String status, String description, LocalDateTime startTime, Duration duration) {
+        this(name, status, description);
+        this.startTime = startTime;
+        this.duration = duration;
+        this.endTime = startTime.plus(duration);
+    }
+
+    public Task(int id, String name, String status, String description) {
+        this(name, status, description);
+        this.id = id;
+
+    }
+
+    public Task(String name, String status, String description) {
         this.name = name;
-        this.status = status;
+        this.status = Status.valueOf(status);
         this.description = description;
     }
 
@@ -61,6 +82,31 @@ public class Task {
         return TaskType.TASK;
     }
 
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public Duration getDuration() {
+        return duration;
+    }
+
+    public void setDuration(Duration duration) {
+        this.duration = duration;
+    }
+
+    public void setEndTime(LocalDateTime endTime) {
+        this.endTime = endTime;
+    }
+
+    public LocalDateTime getEndTime() {
+        return startTime.plus(duration);
+    }
+
+
     @Override
     public String toString() {
         return "Task{" +
@@ -68,6 +114,9 @@ public class Task {
                 ", name='" + name + '\'' +
                 ", status=" + status +
                 ", description='" + description + '\'' +
+                ", startTime=" + getStartTime() +
+                ", duration=" + getDuration() +
+                ", endTime=" + getEndTime() +
                 '}';
     }
 

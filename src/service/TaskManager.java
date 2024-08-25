@@ -4,55 +4,49 @@ import model.Epic;
 import model.SubTask;
 import model.Task;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public interface TaskManager {
-    //a
-    List<Task> getAllTasks();
+    List<Task> getTasks();
 
-    List<Epic> getAllEpics();
+    List<Epic> getEpics();
 
-    List<SubTask> getAllSubTasks();
+    List<SubTask> getSubTasks();
 
-    ArrayList<SubTask> getSubTasksOfEpic(Epic epic);
+    List<SubTask> getEpicSubtasks(Integer id);
 
-    //b
-    void deleteAllTasks();
+    List<Task> getPrioritizedTasks();
 
-    void deleteAllEpics();
+    void deleteTasks();
 
-    void deleteAllSubTasks();
+    void deleteEpics();
 
-    // c
-    Task getTask(int id);
+    void deleteSubTasks();
 
-    Epic getEpic(int id);
+    Task getTaskById(Integer id);
 
-    SubTask getSubTask(int id);
+    Epic getEpicById(Integer id);
 
-    // d
+    SubTask getSubTaskById(Integer id);
+
     Task createTask(Task task);
 
     Epic createEpic(Epic epic);
 
     SubTask createSubTask(SubTask subtask);
 
-    //e
     void updateTask(Task task);
 
     void updateEpic(Epic epic);
 
     void updateSubTask(SubTask subtask);
 
-    //f
-    void deleteTask(int id);
+    void deleteTask(Integer id);
 
-    void deleteEpic(int id);
+    void deleteEpic(Integer id);
 
-    void deleteSubTask(int id);
+    void deleteSubTask(Integer id);
 
     List<Task> getHistory();
-
 
 }

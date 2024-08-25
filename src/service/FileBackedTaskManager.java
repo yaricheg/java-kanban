@@ -1,5 +1,7 @@
 package service;
 
+import converter.Converter;
+import exception.ManagerIOException;
 import model.Epic;
 import model.SubTask;
 import model.Task;
@@ -18,7 +20,6 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
         super(Managers.getDefaultHistory());
         this.file = file;
     }
-
 
     // Сохранение в файл
     private void save() {
@@ -39,17 +40,15 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             }
             // TODO подзадачи, эпики , история
         } catch (IOException e) {
-            throw new ManagerSaveException("Ошибка в файле: " + file.getAbsolutePath());
+            throw new ManagerIOException("Ошибка в файле: " + file.getAbsolutePath());
         }
-
     }
 
-
-    public static FileBackedTaskManager loadFromFile(File file) {
-        int maxId = 0;
+    public FileBackedTaskManager loadFromFile(File file) {
         try (final BufferedReader reader = new BufferedReader(new FileReader(file, StandardCharsets.UTF_8))) {
+            int maxId = 0;
             FileBackedTaskManager fileBackedTaskManager = new FileBackedTaskManager(file);
-            String lineHead = reader.readLine();
+            reader.readLine();
             while (reader.ready()) {
                 String line = reader.readLine();
                 // Задачи
@@ -58,21 +57,26 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                 final int id = task.getId();
                 if (task.getType().equals(TASK)) {
                     fileBackedTaskManager.tasks.put(id, task);
+                    fileBackedTaskManager.prioritizedTasks.add(task);
                 } else if (task.getType().equals(EPIC)) {
                     fileBackedTaskManager.epics.put(id, (Epic) task);
                 } else if (task.getType().equals(SUBTASK)) {
                     fileBackedTaskManager.subtasks.put(id, (SubTask) task);
                     Epic epic = fileBackedTaskManager.epics.get(task.getEpic());
                     epic.addSubTask(task.getId());
+                    fileBackedTaskManager.prioritizedTasks.add(task);
+                }
+                if (id > maxId) {
+                    maxId = id;
                 }
             }
+            fileBackedTaskManager.seq = maxId;
             return fileBackedTaskManager;
 
         } catch (IOException e) {
-            throw new ManagerSaveException("Ошибка в файле: " + file.getAbsolutePath());
+            throw new ManagerIOException("Ошибка в файле: " + file.getAbsolutePath());
         }
     }
-
 
     @Override
     public Task createTask(Task task) {
@@ -96,20 +100,20 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     }
 
     @Override
-    public void deleteAllTasks() {
-        super.deleteAllTasks();
+    public void deleteTasks() {
+        super.deleteTasks();
         save();
     }
 
     @Override
-    public void deleteAllEpics() {
-        super.deleteAllEpics();
+    public void deleteEpics() {
+        super.deleteEpics();
         save();
     }
 
     @Override
-    public void deleteAllSubTasks() {
-        super.deleteAllSubTasks();
+    public void deleteSubTasks() {
+        super.deleteSubTasks();
         save();
     }
 
@@ -127,26 +131,25 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     @Override
     public void updateSubTask(SubTask subtask) { // принимать только subTask
-        super.updateTask(subtask);
+        super.updateSubTask(subtask);
         save();
     }
 
     @Override
-    public void deleteTask(int id) {
+    public void deleteTask(Integer id) {
         super.deleteTask(id);
         save();
     }
 
     @Override
-    public void deleteEpic(int id) { // должны удалиться и подзадачи
+    public void deleteEpic(Integer id) { // должны удалиться и подзадачи
         super.deleteEpic(id);
         save();
     }
 
     @Override
-    public void deleteSubTask(int id) {
+    public void deleteSubTask(Integer id) {
         super.deleteSubTask(id);
         save();//обновить статус
     }
-
 }

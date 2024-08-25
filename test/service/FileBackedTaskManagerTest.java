@@ -3,28 +3,54 @@ package service;
 import model.Epic;
 import model.SubTask;
 import model.Task;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.time.Duration;
+import java.time.LocalDateTime;
 
-import static model.Status.NEW;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+public class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskManager> {
+    FileBackedTaskManagerTest() throws IOException {
+    }
 
-class FileBackedTaskManagerTest {
+    private File file = File.createTempFile("text", ".txt");
 
+    @Override
+    @BeforeEach
+    void init() throws IOException {
+        taskManager = new FileBackedTaskManager(file);
+        task = taskManager.createTask(new Task("Новая задача", "NEW", "Задача 1",
+                LocalDateTime.of(2024, 7, 12, 12, 12), Duration.ofMinutes(30)));
+        epic = taskManager.createEpic(new Epic(6, "Новый Эпик", "NEW", "Задача 1",
+                LocalDateTime.of(2027, 7, 12, 12, 12), Duration.ofMinutes(30)));
+        subTask = taskManager.createSubTask(new SubTask("Новая подзадача", "NEW", "подзадача 1", epic.getId(),
+                LocalDateTime.of(2024, 6, 12, 12, 12), Duration.ofMinutes(30)));
+
+    }
+
+    @DisplayName("Проверка, отсортированного списка после восстановления файла")
     @Test
-    void loadData() throws IOException {
-        File file = File.createTempFile("text", ".txt");
-        FileBackedTaskManager fileBackedTaskManager = new FileBackedTaskManager(file);
-        fileBackedTaskManager.createTask(new Task(1, "Сходить в кино", NEW, "С друзьями в 19:00"));
-        Epic project = fileBackedTaskManager.createEpic(new Epic(2, "Сдача проекта", NEW, "По английскому языку"));
-        fileBackedTaskManager.createSubTask(new SubTask(3, "Перевести текст", NEW, "Про кошку", project.getId()));
-        FileBackedTaskManager fileBackedTaskManager1 = fileBackedTaskManager.loadFromFile(file);
-
-        assertEquals(fileBackedTaskManager.getAllTasks(), fileBackedTaskManager1.getAllTasks());
-        assertEquals(fileBackedTaskManager.getAllEpics(), fileBackedTaskManager1.getAllEpics());
-        assertEquals(fileBackedTaskManager.getAllSubTasks(), fileBackedTaskManager1.getAllSubTasks());
-
+    void сheckSorted() throws IOException {
+        //File check = File.createTempFile("tex", ".txt");
+        Path path = Paths.get("C:\\Users\\yaroslav\\check1.txt");
+        File check = path.toFile();
+        taskManager.deleteTasks();
+        taskManager.deleteEpics();
+        taskManager.deleteSubTasks();
+        taskManager = new FileBackedTaskManager(check);
+        task = taskManager.createTask(new Task("Новая задача", "NEW", "Задача 1",
+                LocalDateTime.of(2024, 7, 12, 12, 12), Duration.ofMinutes(30)));
+        epic = taskManager.createEpic(new Epic(6, "Новый Эпик", "NEW", "Задача 1",
+                LocalDateTime.of(2027, 7, 12, 12, 12), Duration.ofMinutes(30)));
+        subTask = taskManager.createSubTask(new SubTask("Новая подзадача", "NEW", "подзадача 1", epic.getId(),
+                LocalDateTime.of(2024, 6, 12, 12, 12), Duration.ofMinutes(30)));
+        FileBackedTaskManager fileBackedTaskManager = taskManager.loadFromFile(check);
+        Assertions.assertEquals(taskManager.getPrioritizedTasks(), fileBackedTaskManager.getPrioritizedTasks());
     }
 }
